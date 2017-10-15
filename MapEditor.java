@@ -1,4 +1,3 @@
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
