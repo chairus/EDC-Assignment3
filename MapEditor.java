@@ -1,3 +1,4 @@
+import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -247,28 +248,6 @@ public class MapEditor implements ActionListener {
     }
 
     /**
-     * Create and show a dialog box that contains one button
-     * @param owner     - The owner Frame object
-     * @param title     - The title of the dialog box
-     * @param message   - The message displayed on the dialog box
-     */
-    private void createDialogBoxWithOneButton(Frame owner, String title, String message) {
-        JDialog jDialog = new JDialog(owner, title, true);
-        jDialog.setLayout(new FlowLayout());
-        JButton okButton = new JButton("[Ok]");
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jDialog.setVisible(false);
-            }
-        });
-        jDialog.add(new JLabel(message));
-        jDialog.add(okButton);
-        jDialog.setSize(300,300);
-        jDialog.setVisible(true);
-    }
-
-    /**
      * Opens a file and return a Reader object associated to that file
      * @param filename - The name of the file to open
      * @return         - The Reader object
@@ -280,10 +259,44 @@ public class MapEditor implements ActionListener {
             FileReader fReader = new FileReader(filename);
             inFile = new BufferedReader(fReader);
         } catch (FileNotFoundException e) {
-            createDialogBoxWithOneButton(frame, "Error", "File not found.");    // Show a dialog box that has a message of "File not found"
+            new ErrorDialog(frame, "Error", "File not found.");     // Show a dialog box with a message
         }
 
         return inFile;
+    }
+
+    /**
+     * An error dialog class that creates and shows a dialog box with the error message.
+     * @author cyrusvillacampa
+     */
+    private class ErrorDialog extends JDialog implements ActionListener {
+        public ErrorDialog (JFrame owner, String title, String message) {
+            super(owner, title, true);
+            if (owner != null) {
+                setLocationRelativeTo(owner);
+            }
+            JPanel messagePanel = new JPanel();
+            setPreferredSize(new Dimension(300, 150));
+            JLabel messageLabel = new JLabel(message);
+            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
+            messagePanel.setLocation(messagePanel.getX(), messagePanel.getY() + 100);
+            messagePanel.add(messageLabel);
+            getContentPane().add(messagePanel);
+            JPanel buttonPanel = new JPanel();
+            JButton okButton = new JButton("[OK]");
+            okButton.setPreferredSize(new Dimension(150, 40));
+            buttonPanel.add(okButton);
+            okButton.addActionListener(this);
+            getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            pack();
+            setVisible(true);
+        }
+
+        public void actionPerformed(ActionEvent event) {
+            setVisible(false);
+            dispose();
+        }
     }
 
     public static void main(String args[]) {
