@@ -100,9 +100,7 @@ public class MapEditor implements ActionListener {
     private void createFileMenuItems(JMenu menu) {
         JMenuItem menuItem;
 
-        /**
-         * Create the menu item "Open"
-         */
+        // Create the menu item "Open"
         menuItem = new JMenuItem("[Open...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_O);
@@ -111,9 +109,7 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Save as"
-         */
+        // Create the menu item "Save as"
         menuItem = new JMenuItem("[Save as...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_S);
@@ -122,9 +118,7 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Append"
-         */
+        // Create the menu item "Append"
         menuItem = new JMenuItem("[Append...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_A);
@@ -133,9 +127,7 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Quit"
-         */
+        // Create the menu item "Quit"
         menuItem = new JMenuItem("[Quit...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_Q);
@@ -164,9 +156,7 @@ public class MapEditor implements ActionListener {
     private void createEditMenuItems(JMenu menu) {
         JMenuItem menuItem;
 
-        /**
-         * Create the menu item "New place"
-         */
+        // Create the menu item "New place"
         menuItem = new JMenuItem("[New place...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_P);
@@ -175,9 +165,7 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "New road"
-         */
+        // Create the menu item "New road"
         menuItem = new JMenuItem("[New road...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_R);
@@ -186,9 +174,7 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Append"
-         */
+        // Create the menu item "Set start"
         menuItem = new JMenuItem("[Set start...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_T);
@@ -197,16 +183,12 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Quit"
-         */
+        // Create the menu item "Unset start"
         menuItem = new JMenuItem("[Unset start...]");
         menuItem.setSelected(true);
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Set end"
-         */
+        // Create the menu item "Set end"
         menuItem = new JMenuItem("[Set end...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_N);
@@ -215,16 +197,12 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Unset end"
-         */
+        // Create the menu item "Unset end"
         menuItem = new JMenuItem("[Unset end...]");
         menuItem.setSelected(true);
         menuItem.addActionListener(this);
         menu.add(menuItem);
-        /**
-         * Create the menu item "Delete"
-         */
+        // Create the menu item "Delete"
         menuItem = new JMenuItem("[Delete...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_D);
@@ -242,6 +220,7 @@ public class MapEditor implements ActionListener {
                 System.out.println("Item clicked: Open");
                 String filename = chooseFile(FileOption.OPEN);
                 if (filename != null) {
+                    map = new MapImpl();                              // Create a new map object to discard any existing map
                     readMap(filename);
                 }
                 System.out.printf("Map:%n%s", map.toString());
@@ -253,22 +232,27 @@ public class MapEditor implements ActionListener {
                 }
             } else if (actionCommand.contains("append")) {
                 System.out.println("Item clicked: Append");
+                String filename = chooseFile(FileOption.OPEN);
+                if (filename != null) {
+                    readMap(filename);
+                }
+                System.out.printf("Map:%n%s", map.toString());
             } else if (actionCommand.contains("quit")) {
                 System.out.println("Item clicked: Quit");
                 System.exit(0);
             }
         } catch (MapFormatException e) {
-            new ErrorDialog(frame, "Error", e.getMessage());     // Show a dialog box with a message
+            new ErrorDialog(frame, "Error", e.getMessage());    // Show a dialog box with a message
             map = new MapImpl();
         } catch (IOException e) {
-            new ErrorDialog(frame, "Error", e.getMessage());     // Show a dialog box with a message
+            new ErrorDialog(frame, "Error", e.getMessage());    // Show a dialog box with a message
             map = new MapImpl();
         }
     }
 
     /**
      * Reads a map and stores it in this map object
-     * @param filename  - The name of the file
+     * @param filename  - The name of the file to read from
      * @throws MapFormatException
      * @throws IOException
      */
@@ -277,6 +261,11 @@ public class MapEditor implements ActionListener {
         mapReaderWriter.read(reader, map);
     }
 
+    /**
+     * Writes the current map on a file
+     * @param filename  - The name of the file to write the map to
+     * @throws IOException
+     */
     private void writeMap(String filename) throws IOException {
         Writer writer = openFileForWrite(filename);
         mapReaderWriter.write(writer, map);
@@ -294,6 +283,12 @@ public class MapEditor implements ActionListener {
         return inFile;
     }
 
+    /**
+     * Opens and/or create a file and return a Writer object associated to that file
+     * @param filename - The name of the file to write on
+     * @return         - The Writer object
+     * @throws IOException
+     */
     private Writer openFileForWrite(String filename) throws IOException {
         Writer outFile;
         FileWriter fWriter = new FileWriter(filename);
@@ -336,8 +331,8 @@ public class MapEditor implements ActionListener {
 
     /**
      * Open up an dialog box that lets the user select the file to be open/read or save the map in a file
-     * @param
-     * @return - The absolute path of the selected file
+     * @param option - The operation to be done on the file
+     * @return       - The absolute path of the selected file
      * @throws IOException
      */
     private String chooseFile(FileOption option) {

@@ -279,15 +279,22 @@ public class MapImpl implements Map {
     }
 
 
-    //Return the starting place of this map
+    /**
+     * Return the starting place of this map
+     * @return - The starting place of this map
+     */
     public Place getStartPlace() {
         return this.startPlace;
     }
 
 
-    //Set the place p as the ending place
-    //If p==null, unsets the ending place
-    //Throws IllegalArgumentException if the place p is not in the map
+    /**
+     * Set the place p as the ending place
+     * If p==null, unsets the ending place
+     * Throws IllegalArgumentException if the place p is not in the map
+     * @param p - The place to set the end place to.
+     * @throws IllegalArgumentException
+     */
     public void setEndPlace(Place p)
             throws IllegalArgumentException {
 
@@ -315,7 +322,10 @@ public class MapImpl implements Map {
     }
 
 
-    //Return the ending place of this map
+    /**
+     * Return the ending place of this map
+     * @return - The ending place of this map
+     */
     public Place getEndPlace() {
         return this.endPlace;
     }
