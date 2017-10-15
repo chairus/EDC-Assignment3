@@ -1,7 +1,12 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 
 /**
  * This class reads a map from a file and writes it on the map object to be edited. In addition, this class
@@ -15,7 +20,12 @@ public class MapEditor implements ActionListener {
     /**
      * Constructor
      */
-    public MapEditor() {
+    public MapEditor() { }
+
+    /**
+     * Create and show the GUI
+     */
+    public void show() {
         init();
     }
 
@@ -195,9 +205,9 @@ public class MapEditor implements ActionListener {
          */
         menuItem = new JMenuItem("[Set end...]");
         menuItem.setSelected(true);
-        menuItem.setMnemonic(KeyEvent.VK_E);
+        menuItem.setMnemonic(KeyEvent.VK_N);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + E' to select this menu item
-                KeyEvent.VK_E,
+                KeyEvent.VK_N,
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
@@ -213,11 +223,71 @@ public class MapEditor implements ActionListener {
          */
         menuItem = new JMenuItem("[Delete...]");
         menuItem.setSelected(true);
+        menuItem.setMnemonic(KeyEvent.VK_D);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + E' to select this menu item
+                KeyEvent.VK_D,
+                ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
     }
 
     public void actionPerformed(ActionEvent event) {
-        System.out.println("Item clicked: " + event.getActionCommand());
+        String actionCommand = event.getActionCommand().toLowerCase();
+        if (actionCommand.contains("open")) {
+            System.out.println("Item clicked: Open");
+            openFile("whatever");
+        } else if (actionCommand.contains("save as")) {
+            System.out.println("Item clicked: Save as");
+        } else if (actionCommand.contains("append")) {
+            System.out.println("Item clicked: Append");
+        } else if (actionCommand.contains("quit")) {
+            System.out.println("Item clicked: Quit");
+            System.exit(0);
+        }
+    }
+
+    /**
+     * Create and show a dialog box that contains one button
+     * @param owner     - The owner Frame object
+     * @param title     - The title of the dialog box
+     * @param message   - The message displayed on the dialog box
+     */
+    private void createDialogBoxWithOneButton(Frame owner, String title, String message) {
+        JDialog jDialog = new JDialog(owner, title, true);
+        jDialog.setLayout(new FlowLayout());
+        JButton okButton = new JButton("[Ok]");
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jDialog.setVisible(false);
+            }
+        });
+        jDialog.add(new JLabel(message));
+        jDialog.add(okButton);
+        jDialog.setSize(300,300);
+        jDialog.setVisible(true);
+    }
+
+    /**
+     * Opens a file and return a Reader object associated to that file
+     * @param filename - The name of the file to open
+     * @return         - The Reader object
+     */
+    private Reader openFile(String filename) {
+        Reader inFile = null;
+
+        try {
+            FileReader fReader = new FileReader(filename);
+            inFile = new BufferedReader(fReader);
+        } catch (FileNotFoundException e) {
+            createDialogBoxWithOneButton(frame, "Error", "File not found.");    // Show a dialog box that has a message of "File not found"
+        }
+
+        return inFile;
+    }
+
+    public static void main(String args[]) {
+        MapEditor travelMaps = new MapEditor();
+        travelMaps.show();
     }
 }
