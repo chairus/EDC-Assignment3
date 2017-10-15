@@ -1,13 +1,11 @@
 import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 
 /**
  * This class reads a map from a file and writes it on the map object to be edited. In addition, this class
@@ -17,11 +15,14 @@ import java.io.Reader;
 
 public class MapEditor implements ActionListener {
     private JFrame frame;
+    private Map map;
 
     /**
      * Constructor
      */
-    public MapEditor() { }
+    public MapEditor() {
+        map = new MapImpl();
+    }
 
     /**
      * Create and show the GUI
@@ -234,17 +235,39 @@ public class MapEditor implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         String actionCommand = event.getActionCommand().toLowerCase();
-        if (actionCommand.contains("open")) {
-            System.out.println("Item clicked: Open");
-            openFile("whatever");
-        } else if (actionCommand.contains("save as")) {
-            System.out.println("Item clicked: Save as");
-        } else if (actionCommand.contains("append")) {
-            System.out.println("Item clicked: Append");
-        } else if (actionCommand.contains("quit")) {
-            System.out.println("Item clicked: Quit");
-            System.exit(0);
+        try {
+            if (actionCommand.contains("open")) {
+                System.out.println("Item clicked: Open");
+                String filename = chooseFile();
+                if (filename != null) {
+                    readMap(filename);
+                }
+                System.out.printf("Map:%n%s", map.toString());
+            } else if (actionCommand.contains("save as")) {
+                System.out.println("Item clicked: Save as");
+            } else if (actionCommand.contains("append")) {
+                System.out.println("Item clicked: Append");
+            } else if (actionCommand.contains("quit")) {
+                System.out.println("Item clicked: Quit");
+                System.exit(0);
+            }
+        } catch (MapFormatException e) {
+            new ErrorDialog(frame, "Error", e.getMessage());     // Show a dialog box with a message
+        } catch (IOException e) {
+            new ErrorDialog(frame, "Error", e.getMessage());     // Show a dialog box with a message
         }
+    }
+
+    /**
+     * Reads a map and stores it in this map object
+     * @param filename  - The name of the file
+     * @throws MapFormatException
+     * @throws IOException
+     */
+    private void readMap(String filename) throws MapFormatException, IOException {
+        Reader reader = openFile(filename);
+        MapReaderWriter mapReaderWriter = new MapReaderWriter();
+        mapReaderWriter.read(reader, map);
     }
 
     /**
@@ -252,16 +275,10 @@ public class MapEditor implements ActionListener {
      * @param filename - The name of the file to open
      * @return         - The Reader object
      */
-    private Reader openFile(String filename) {
-        Reader inFile = null;
-
-        try {
-            FileReader fReader = new FileReader(filename);
-            inFile = new BufferedReader(fReader);
-        } catch (FileNotFoundException e) {
-            new ErrorDialog(frame, "Error", "File not found.");     // Show a dialog box with a message
-        }
-
+    private Reader openFile(String filename) throws FileNotFoundException {
+        Reader inFile;
+        FileReader fReader = new FileReader(filename);
+        inFile = new BufferedReader(fReader);
         return inFile;
     }
 
@@ -299,6 +316,24 @@ public class MapEditor implements ActionListener {
         }
     }
 
+    /**
+     * Open up an open dialog box that lets the user select the file to be open/read
+     * @return - The absolute path of the selected file
+     * @throws IOException
+     */
+    private String chooseFile() {
+        JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        int retValue = jFileChooser.showOpenDialog(frame);
+        if (retValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jFileChooser.getSelectedFile();
+            return selectedFile.getAbsolutePath();
+        }
+        return null;
+    }
+
+    /**
+     * MAIN
+     */
     public static void main(String args[]) {
         MapEditor travelMaps = new MapEditor();
         travelMaps.show();

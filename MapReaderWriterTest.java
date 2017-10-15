@@ -13,8 +13,8 @@ public class MapReaderWriterTest {
         Map map = new MapImpl();
         try {
             System.out.println("Reading file content to map...");
-            FileReader fReader = new FileReader("exampleMapWithComments.map");
-            // FileReader fReader = new FileReader("exampleMap.map");
+//            FileReader fReader = new FileReader("exampleMapWithComments.map");
+             FileReader fReader = new FileReader("example.map");
             Reader in = new BufferedReader(fReader);
             mprw.read(in, map);
         } catch (FileNotFoundException e) {
