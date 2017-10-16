@@ -219,8 +219,12 @@ public class MapEditor implements ActionListener {
                 System.out.println("Item clicked: Open");
                 String filename = chooseFile(FileOption.OPEN);
                 if (filename != null) {
-                    map = new MapImpl();                              // Create a new map object to discard any existing map
-                    readMap(filename);
+                    if (filename.contains("map")) {
+                        map = new MapImpl();                              // Create a new map object to discard any existing map
+                        readMap(filename);
+                    } else {
+                        throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
+                    }
                 }
                 System.out.printf("Map:%n%s", map.toString());
             } else if (actionCommand.contains("save as")) {
@@ -306,8 +310,11 @@ public class MapEditor implements ActionListener {
                 setLocationRelativeTo(owner);
             }
             JPanel messagePanel = new JPanel();
-            setPreferredSize(new Dimension(300, 150));
-            JLabel messageLabel = new JLabel(message);
+            setPreferredSize(new Dimension(350, 175));
+            JLabel messageLabel = new JLabel();
+            // To provide a wrap around effect of the label's text and also to center align the text.
+            String labelText = String.format(String.format("<html><div style=\"width:%dpx;text-align:center\">%s</div></html>", 250, message));
+            messageLabel.setText(labelText);
             messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
             messagePanel.add(messageLabel);
             getContentPane().add(messagePanel);
