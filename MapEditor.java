@@ -216,6 +216,7 @@ public class MapEditor implements ActionListener {
         menu.add(menuItem);
     }
 
+    @Override
     public void actionPerformed(ActionEvent event) {
         String actionCommand = event.getActionCommand().toLowerCase();
         try {
@@ -226,7 +227,7 @@ public class MapEditor implements ActionListener {
                     if (filename.contains("map")) {
                         map = new MapImpl();                     // Create a new map object to discard any existing map
                         map.addListener(mapPanel);               // Add back the listeners to the map
-                        readMap(filename);
+                        readMap(filename, this.map);
                     } else {
                         throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
                     }
@@ -243,7 +244,11 @@ public class MapEditor implements ActionListener {
                 String filename = chooseFile(FileOption.OPEN);
                 if (filename != null) {
                     if (filename.contains("map")) {
-                        readMap(filename);
+                        Map tempMap = new MapImpl();             // Create a temporary map
+                        readMap(filename, tempMap);              // Read the map file and store the contents in the temporary map
+                        readMap(filename, this.map);             // If there are no errors in the map file then read the map file again
+                                                                 // and store it on this map. This is to prevent from adding partial
+                                                                 // places and/or roads in the original map object.
                     } else {
                         throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
                     }
@@ -254,21 +259,20 @@ public class MapEditor implements ActionListener {
                 System.exit(0);
             }
         } catch (MapFormatException e) {
-            new ErrorDialog(frame, "Error", e.getMessage());    // Show a dialog box with a message
-            map = new MapImpl();
+            new ErrorDialog(frame, "Error", e.getMessage());
         } catch (IOException e) {
-            new ErrorDialog(frame, "Error", e.getMessage());    // Show a dialog box with a message
-            map = new MapImpl();
+            new ErrorDialog(frame, "Error", e.getMessage());
         }
     }
 
     /**
-     * Reads a map and stores it in this map object
+     * Reads a map file and stores it in the given map argument
      * @param filename  - The name of the file to read from
+     * @param map       - The map on where the places and roads read from the map file will be stored
      * @throws MapFormatException
      * @throws IOException
      */
-    private void readMap(String filename) throws MapFormatException, IOException {
+    private void readMap(String filename, Map map) throws MapFormatException, IOException {
         Reader reader = openFileForRead(filename);
         mapReaderWriter.read(reader, map);
     }
