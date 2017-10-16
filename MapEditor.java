@@ -14,6 +14,7 @@ import java.io.*;
 
 public class MapEditor implements ActionListener {
     private JFrame frame;
+    private MapPanel mapPanel;
     private Map map;
     private MapReaderWriter mapReaderWriter;
 
@@ -23,6 +24,8 @@ public class MapEditor implements ActionListener {
     public MapEditor() {
         map = new MapImpl();
         mapReaderWriter = new MapReaderWriter();
+        mapPanel = new MapPanel();
+        map.addListener(mapPanel);
     }
 
     /**
@@ -39,7 +42,6 @@ public class MapEditor implements ActionListener {
         frame = new JFrame();
         frame.setTitle("Travel Maps");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200,800);
         prepareAndShowGui();
     }
 
@@ -51,6 +53,8 @@ public class MapEditor implements ActionListener {
         JMenuBar menuBar;
         menuBar = createMenuBar();
         frame.setJMenuBar(menuBar);
+        frame.add(mapPanel);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Set the size of the frame to full screen
         frame.setVisible(true);
         frame.setResizable(true);
     }
@@ -205,7 +209,7 @@ public class MapEditor implements ActionListener {
         menuItem = new JMenuItem("[Delete...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_D);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + E' to select this menu item
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(         // Set keyboard keys 'CTRL + E' to select this menu item
                 KeyEvent.VK_D,
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
@@ -220,7 +224,8 @@ public class MapEditor implements ActionListener {
                 String filename = chooseFile(FileOption.OPEN);
                 if (filename != null) {
                     if (filename.contains("map")) {
-                        map = new MapImpl();                              // Create a new map object to discard any existing map
+                        map = new MapImpl();                     // Create a new map object to discard any existing map
+                        map.addListener(mapPanel);               // Add back the listeners to the map
                         readMap(filename);
                     } else {
                         throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
@@ -237,7 +242,11 @@ public class MapEditor implements ActionListener {
                 System.out.println("Item clicked: Append");
                 String filename = chooseFile(FileOption.OPEN);
                 if (filename != null) {
-                    readMap(filename);
+                    if (filename.contains("map")) {
+                        readMap(filename);
+                    } else {
+                        throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
+                    }
                 }
                 System.out.printf("Map:%n%s", map.toString());
             } else if (actionCommand.contains("quit")) {
@@ -306,14 +315,13 @@ public class MapEditor implements ActionListener {
     private class ErrorDialog extends JDialog implements ActionListener {
         public ErrorDialog (JFrame owner, String title, String message) {
             super(owner, title, true);
-            if (owner != null) {
-                setLocationRelativeTo(owner);
-            }
             JPanel messagePanel = new JPanel();
             setPreferredSize(new Dimension(350, 175));
             JLabel messageLabel = new JLabel();
             // To provide a wrap around effect of the label's text and also to center align the text.
-            String labelText = String.format(String.format("<html><div style=\"width:%dpx;text-align:center\">%s</div></html>", 250, message));
+            String labelText = String.format(String.format("<html><div style=\"width:%dpx;text-align:center\">%s</div></html>",
+                                                            250,
+                                                            message));
             messageLabel.setText(labelText);
             messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
             messagePanel.add(messageLabel);
@@ -326,6 +334,9 @@ public class MapEditor implements ActionListener {
             getContentPane().add(buttonPanel, BorderLayout.SOUTH);
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             pack();
+            if (owner != null) {
+                setLocationRelativeTo(owner);
+            }
             setVisible(true);
         }
 

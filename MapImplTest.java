@@ -82,11 +82,11 @@ public class MapImplTest {
          * TEST deleteListener() method
          * ==============================================
          */
-        System.out.println("==============================================");
-        System.out.println("\t TEST deleteListener() method");
-        System.out.println("==============================================");
-        testDeleteListener(map, ml);
-        System.out.println("Deleted a map listener");
+//        System.out.println("==============================================");
+//        System.out.println("\t TEST deleteListener() method");
+//        System.out.println("==============================================");
+//        testDeleteListener(map, ml);
+//        System.out.println("Deleted a map listener");
         /**
          * ==============================================
          * TEST newRoad() METHOD
