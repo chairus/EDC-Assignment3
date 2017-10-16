@@ -30,6 +30,15 @@ public class MapImpl implements Map {
         this.mapListeners = new ArrayList<>();
     }
 
+    // Copy constructor
+    public MapImpl(MapImpl anotherMap) {
+        this.places = anotherMap.places;
+        this.roads = anotherMap.roads;
+        this.startPlace = null;
+        this.endPlace = null;
+        this.mapListeners = new ArrayList<>();
+    }
+
     /**
      * Add the MapListener ml to this map.
      * Note: A map can have multiple listeners

@@ -227,7 +227,7 @@ public class MapEditor implements ActionListener {
                     if (filename.contains("map")) {
                         map = new MapImpl();                     // Create a new map object to discard any existing map
                         map.addListener(mapPanel);               // Add back the listeners to the map
-                        readMap(filename, this.map);
+                        attemptReadOfMapFile(filename);
                     } else {
                         throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
                     }
@@ -244,11 +244,7 @@ public class MapEditor implements ActionListener {
                 String filename = chooseFile(FileOption.OPEN);
                 if (filename != null) {
                     if (filename.contains("map")) {
-                        Map tempMap = new MapImpl();             // Create a temporary map
-                        readMap(filename, tempMap);              // Read the map file and store the contents in the temporary map
-                        readMap(filename, this.map);             // If there are no errors in the map file then read the map file again
-                                                                 // and store it on this map. This is to prevent from adding partial
-                                                                 // places and/or roads in the original map object.
+                        attemptReadOfMapFile(filename);
                     } else {
                         throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
                     }
@@ -285,6 +281,22 @@ public class MapEditor implements ActionListener {
     private void writeMap(String filename) throws IOException {
         Writer writer = openFileForWrite(filename);
         mapReaderWriter.write(writer, map);
+    }
+
+    /**
+     * Attempts to first read the given map file on a copy of this map object. If a there is an error in the map file
+     * an exception will be thrown and therefore the it wouldn't store the contents of the map file into the original
+     * map object, otherwise it will store it into the original map file.
+     * @param filename  - The name of the file to read from
+     * @throws MapFormatException
+     * @throws IOException
+     */
+    private void attemptReadOfMapFile(String filename) throws MapFormatException, IOException {
+        Map tempMap = new MapImpl((MapImpl)this.map); // Create a temporary map
+        readMap(filename, tempMap);                   // Read the map file and store the contents in the temporary map
+        readMap(filename, this.map);                  // If there are no errors in the map file then read the map file again
+                                                      // and store it on this map. This is to prevent from adding partial
+                                                      // places and/or roads in the original map object.
     }
 
     /**
