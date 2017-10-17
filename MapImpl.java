@@ -32,8 +32,10 @@ public class MapImpl implements Map {
 
     // Copy constructor
     public MapImpl(MapImpl anotherMap) {
-        this.places = anotherMap.places;
-        this.roads = anotherMap.roads;
+        Set<Place> anotherMapPlaces = new LinkedHashSet<>(anotherMap.places);
+        Set<Road> anotherMapRoads = new LinkedHashSet<>(anotherMap.roads);
+        this.places = anotherMapPlaces;
+        this.roads = anotherMapRoads;
         this.startPlace = null;
         this.endPlace = null;
         this.mapListeners = new ArrayList<>();
