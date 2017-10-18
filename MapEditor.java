@@ -24,7 +24,7 @@ public class MapEditor implements ActionListener {
     public MapEditor() {
         map = new MapImpl();
         mapReaderWriter = new MapReaderWriter();
-        mapPanel = new MapPanel();
+        mapPanel = new MapPanel(map);
         map.addListener(mapPanel);
     }
 
@@ -42,21 +42,22 @@ public class MapEditor implements ActionListener {
         frame = new JFrame();
         frame.setTitle("Travel Maps");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        prepareAndShowGui();
+        createAndShowGui();
     }
 
     /**
      * Invoke methods that create and initialize components(menu bar and display area) in the GUI and then shows
      * GUI.
      */
-    private void prepareAndShowGui() {
+    private void createAndShowGui() {
         JMenuBar menuBar;
         menuBar = createMenuBar();
-        frame.setJMenuBar(menuBar);
-        frame.add(mapPanel);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Set the size of the frame to full screen
+        frame.pack();
         frame.setVisible(true);
         frame.setResizable(true);
+        frame.add(mapPanel);
+        frame.setJMenuBar(menuBar);
     }
 
     /**
