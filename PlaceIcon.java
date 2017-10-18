@@ -2,6 +2,11 @@ import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ * This class
+ * @author cyrusvillacampa
+ */
+
 public class PlaceIcon extends JComponent implements PlaceListener {
     private int x, y;       // X and Y coordinates of the place
     private Place place;    // The place that this place listener is listening to

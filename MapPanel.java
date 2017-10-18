@@ -29,9 +29,8 @@ public class MapPanel extends JPanel implements MapListener {
      * @return      - The PlaceIcon object
      */
     private PlaceIcon createPlaceIcon(Place place) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         PlaceIcon placeIcon = new PlaceIcon(place);
-        placeIcon.setBounds(0, 0, screenSize.width, screenSize.height);
+        placeIcon.setBounds(0, 0, Constants.screenSize.width, Constants.screenSize.height);
         return placeIcon;
     }
 
@@ -110,9 +109,9 @@ public class MapPanel extends JPanel implements MapListener {
             }
             placesIndex += 1;
         }
-        ///////////////////////////////////////////////////////////////////////////////
-        //  ADD PLACES into this.places that are in mapPlaces but not in this.places //
-        ///////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////
+        //  ADD PLACES into this.places that are in mapPlaces but not in this.places    //
+        //////////////////////////////////////////////////////////////////////////////////
         if (mapPlaces.size() != 0) {                            // If there are new places that has been added
             for (Place place: mapPlaces) {
                 this.places.add(place);
