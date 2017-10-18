@@ -15,13 +15,13 @@ public class PlaceIcon extends JComponent implements PlaceListener {
      */
     public PlaceIcon(Place place) {
         this.place = place;
-        this.updatePlaceCoordinate();
+        this.updatePlaceIconCoordinate();
     }
 
     /**
      * Updates this place icon's coordinate to the coordinates of the place it is listening to
      */
-    private void updatePlaceCoordinate() {
+    private void updatePlaceIconCoordinate() {
         this.x = place.getX();
         this.y = place.getY();
     }
@@ -37,7 +37,7 @@ public class PlaceIcon extends JComponent implements PlaceListener {
     @Override
     public void placeChanged() {
         System.out.printf("placeChanged() called%n");
-        this.updatePlaceCoordinate();
+        this.updatePlaceIconCoordinate();
         repaint();
     }
 
