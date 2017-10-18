@@ -26,6 +26,10 @@ public class PlaceIcon extends JComponent implements PlaceListener {
         this.y = place.getY();
     }
 
+    /**
+     * Returns the place associated to this placeIcon
+     * @return - The place associated to this placeIcon
+     */
     public Place getPlace() {
         return this.place;
     }
