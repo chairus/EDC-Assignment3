@@ -64,7 +64,7 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
-     * Removes all the PlaceIcons in the list of place icons.
+     * Removes all the places and placeIcons in this map panel.
      */
     public void removeAllPlaceAndPlaceIcon() {
         while (!this.placeIcons.isEmpty()) {
