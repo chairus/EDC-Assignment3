@@ -116,6 +116,20 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
+     * Returns the place icons that have been selected by the user.
+     * @return  - A list of selected place icons
+     */
+    public List<PlaceIcon> getSelectedPlaceIcon() {
+        List<PlaceIcon> selectedPlaceIcons = new ArrayList<>();
+        for (PlaceIcon placeIcon: this.placeIcons) {
+            if (placeIcon.isSelected() && !placeIcon.getPlace().isEndPlace() && !placeIcon.getPlace().isStartPlace()) {
+                selectedPlaceIcons.add(placeIcon);
+            }
+        }
+        return selectedPlaceIcons;
+    }
+
+    /**
      * This method adds mouse listeners to this panel
      */
     private void addMouseListeners() {

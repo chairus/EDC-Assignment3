@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.util.List;
 
 /**
  * This class reads a map from a file and writes it on the map object to be edited. In addition, this class
@@ -247,6 +248,13 @@ public class MapEditor implements ActionListener {
      */
     private void setStartPlaceAction() {
         System.out.println("Item clicked: Set start");
+        List<PlaceIcon> selectedPlaceIcons = mapPanel.getSelectedPlaceIcon();
+        if (selectedPlaceIcons.size() > 1) {        // There are multiple places currently selected
+            new InfoDialog(frame, "Warning", "Only one place can be selected");
+        }
+        if (selectedPlaceIcons.size() == 1) {
+            ((MapImpl.PlaceImpl)selectedPlaceIcons.get(0).getPlace()).setStartPlace(true);
+        }
     }
 
     /**
@@ -394,6 +402,44 @@ public class MapEditor implements ActionListener {
         FileWriter fWriter = new FileWriter(filename);
         outFile = new BufferedWriter(fWriter);
         return outFile;
+    }
+
+    /**
+     * An information dialog class that creates and shows a dialog box with a message.
+     * @author cyrusvillacampa
+     */
+    private class InfoDialog extends JDialog implements ActionListener {
+        public InfoDialog (JFrame owner, String title, String message) {
+            super(owner, title, true);
+            JPanel messagePanel = new JPanel();
+            setPreferredSize(new Dimension(350, 175));
+            JLabel messageLabel = new JLabel();
+            // To provide a wrap around effect of the label's text and also to center align the text.
+            String labelText = String.format(String.format("<html><div style=\"width:%dpx;text-align:center\">%s</div></html>",
+                    250,
+                    message));
+            messageLabel.setText(labelText);
+            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
+            messagePanel.add(messageLabel);
+            getContentPane().add(messagePanel);
+            JPanel buttonPanel = new JPanel();
+            JButton okButton = new JButton("[OK]");
+            okButton.setPreferredSize(new Dimension(150, 40));
+            buttonPanel.add(okButton);
+            okButton.addActionListener(this);
+            getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            pack();
+            if (owner != null) {
+                setLocationRelativeTo(owner);
+            }
+            setVisible(true);
+        }
+
+        public void actionPerformed(ActionEvent event) {
+            setVisible(false);
+            dispose();
+        }
     }
 
     /**

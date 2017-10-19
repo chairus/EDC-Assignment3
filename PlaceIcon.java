@@ -72,10 +72,18 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     protected void paintComponent(Graphics g) {
         System.out.println("[PlaceIcon] paintComponent called");
         super.paintComponent(g);    // Customize what to paint after calling this
-        if (isSelected) {
-            g.setColor(Color.GREEN);
-            g.fillRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
+        Color fillColor = this.getBackground();
+        if (isSelected && !this.place.isStartPlace() && !this.place.isEndPlace()) {
+            fillColor = Color.CYAN;
         }
+        if (isSelected && this.place.isStartPlace()) {
+            fillColor = Color.BLUE;
+        }
+        if (isSelected && this.place.isEndPlace()) {
+            fillColor = Color.GREEN;
+        }
+        g.setColor(fillColor);
+        g.fillRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
         Graphics2D g2 = (Graphics2D)g;
         float thickness = 3.0f;
         g2.setColor(Color.BLACK);
