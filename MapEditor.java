@@ -49,7 +49,6 @@ public class MapEditor implements ActionListener {
         frame.pack();
         frame.setVisible(true);
         frame.setResizable(true);
-//        mapPanel.setBounds(0,0,Constants.screenSize.width,Constants.screenSize.height);
         frame.add(mapPanel);
         frame.setJMenuBar(menuBar);
     }
