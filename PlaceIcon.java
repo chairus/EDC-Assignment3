@@ -45,6 +45,22 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         return this.place;
     }
 
+    /**
+     * Set the value of the isSelected field of this place icon
+     * @param val   - True/False
+     */
+    public void setIsSelected(boolean val) {
+        this.isSelected = val;
+    }
+
+    /**
+     * Returns true if this place icon is selected
+     * @return  - True if selected, false otherwise
+     */
+    public boolean isSelected() {
+        return this.isSelected;
+    }
+
     @Override
     public void placeChanged() {
         System.out.printf("[PlaceIcon] placeChanged called%n");

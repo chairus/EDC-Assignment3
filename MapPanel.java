@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
@@ -22,6 +23,8 @@ public class MapPanel extends JPanel implements MapListener {
         this.places = new ArrayList<>(map.getPlaces());
         this.placeIcons = new ArrayList<>();
         setLayout(null);
+        setBounds(0, 0, Constants.screenSize.width, Constants.screenSize.height);
+        addMouseListeners();
     }
 
     /**
@@ -110,6 +113,84 @@ public class MapPanel extends JPanel implements MapListener {
                 addPlaceIcon(place);
             }
         }
+    }
+
+    /**
+     * This method adds mouse listeners to this panel
+     */
+    private void addMouseListeners() {
+        this.addMouseListener(new MouseListener() {
+            /**
+             * Invoked when the mouse button has been clicked (pressed
+             * and released) on a component. It deselects all selected
+             * place icon and calls repaint() if there were icons that
+             * have been deselected
+             *
+             * @param e
+             */
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
+                boolean hasDeselected = clearSelectedPlaceIcons();
+                if (hasDeselected) repaint();
+            }
+
+            /**
+             * Invoked when a mouse button has been pressed on a component.
+             *
+             * @param e
+             */
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // DOESN'T DO ANYTHING FOR NOW
+            }
+
+            /**
+             * Invoked when a mouse button has been released on a component.
+             *
+             * @param e
+             */
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // DOESN'T DO ANYTHING FOR NOW
+            }
+
+            /**
+             * Invoked when the mouse enters a component.
+             *
+             * @param e
+             */
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // DOESN'T DO ANYTHING FOR NOW
+            }
+
+            /**
+             * Invoked when the mouse exits a component.
+             *
+             * @param e
+             */
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // DOESN'T DO ANYTHING FOR NOW
+            }
+        });
+    }
+
+    /**
+     * Deselects all selected place icons. Returns true if there are place icons
+     * that has been deselected.
+     * @return  - True if there were place icons that were deselected, false otherwise
+     */
+    private boolean clearSelectedPlaceIcons() {
+        boolean hasDeselected = false;
+        for (PlaceIcon placeIcon: this.placeIcons) {
+            if (placeIcon.isSelected()) {
+                placeIcon.setIsSelected(false);
+                hasDeselected = true;
+            }
+        }
+        return hasDeselected;
     }
 
     /**
