@@ -1,6 +1,5 @@
 import javax.swing.JComponent;
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -10,8 +9,9 @@ import java.awt.event.MouseListener;
  */
 
 public class PlaceIcon extends JComponent implements PlaceListener, MouseListener {
-    private int x, y;       // X and Y coordinates of the place
-    private Place place;    // The place that this place listener is listening to
+    private int x, y;           // X and Y coordinates of the place
+    private Place place;        // The place that this place listener is listening to
+    private boolean isSelected; // A value that determines if this place icon is selected
 
     @SuppressWarnings("Default constructor not available")
     private PlaceIcon() {}
@@ -25,6 +25,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         this.place = place;
         this.updatePlaceIconCoordinate();
         this.addMouseListener(this);
+        this.isSelected = false;
     }
 
     /**
@@ -55,10 +56,15 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     protected void paintComponent(Graphics g) {
         System.out.println("[PlaceIcon] paintComponent called");
         super.paintComponent(g);    // Customize what to paint after calling this
-        g.setColor(Color.GREEN);
-        g.fillRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
-        g.setColor(Color.BLACK);
-        g.drawRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
+        if (isSelected) {
+            g.setColor(Color.GREEN);
+            g.fillRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
+        }
+        Graphics2D g2 = (Graphics2D)g;
+        float thickness = 3.0f;
+        g2.setColor(Color.BLACK);
+        g2.setStroke(new BasicStroke(thickness));
+        g2.drawRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
     }
 
     //////////////////////
@@ -66,13 +72,19 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     //////////////////////
     /**
      * Invoked when the mouse button has been clicked (pressed
-     * and released) on a component.
+     * and released) on a component. It switches the value from
+     * true to false or false to true of the "isSelected" field.
      *
      * @param e
      */
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
+        System.out.printf("isSelected before: %s%n", isSelected);
+        isSelected = !isSelected;
+        repaint();
+        System.out.printf("isSelected after: %s%n", isSelected);
+
     }
 
     /**

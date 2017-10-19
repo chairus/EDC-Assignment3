@@ -135,14 +135,6 @@ public class MapPanel extends JPanel implements MapListener {
         this.map = map;
     }
 
-    /**
-     * Returns the placeIcons in this MapPanel object
-     * @return - The placeIcons of this MapPanel object
-     */
-    public List<PlaceIcon> getPlaceIcons() {
-        return this.placeIcons;
-    }
-
     @Override
     public void placesChanged() {
         System.out.println("placesChanged");
