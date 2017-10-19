@@ -222,6 +222,14 @@ public class MapEditor implements ActionListener {
                 appendMapFileAction();
             } else if (actionCommand.contains("quit")) {
                 terminateProgramAction();
+            } else if (actionCommand.contains("unset start")) {
+                unsetStartPlaceAction();
+            } else if (actionCommand.contains("unset end")) {
+                unsetEndPlaceAction();
+            }  else if (actionCommand.contains("set start")) {
+            setStartPlaceAction();
+            } else if (actionCommand.contains("set end")) {
+                setEndPlaceAction();
             }
         } catch (MapFormatException e) {
             System.err.println("MapFormatException: " + e.getMessage());
@@ -233,7 +241,41 @@ public class MapEditor implements ActionListener {
     }
 
     /**
-     * Performs a sequence of actions when the open menu item is selected
+     * Sets a selected place to be the start place. If there are more than one
+     * place selected an error dialog box will pop up that informs the user
+     * that only one place can be selected.
+     */
+    private void setStartPlaceAction() {
+        System.out.println("Item clicked: Set start");
+    }
+
+    /**
+     * Sets a selected place to be the end place. If there are more than one
+     * place selected an error dialog box will pop up that informs the user
+     * that only one place can be selected.
+     */
+    private void setEndPlaceAction() {
+        System.out.println("Item clicked: Set end");
+    }
+
+    /**
+     * Unsets the start place
+     */
+    private void unsetStartPlaceAction() {
+        System.out.println("Item clicked: Unset start");
+    }
+
+    /**
+     * Unsets the end place
+     */
+    private void unsetEndPlaceAction() {
+        System.out.println("Item clicked: Unset end");
+    }
+
+    /**
+     * Open then read a map file and discard the current map and store the contents
+     * of the read file in a new map object. Throws MapFormatException if there
+     * are any problems about the contents of the file.
      * @throws MapFormatException
      * @throws IOException
      */
@@ -244,7 +286,7 @@ public class MapEditor implements ActionListener {
             if (filename.contains("map")) {
                 //////////////////////////////////////////////////////////////////////////////////
                 //  IF THERE ARE NO ERRORS IN THE MAP FILE THEN READ THE MAP FILE AGAIN         //
-                //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARITAL    //
+                //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARTIAL    //
                 //  PLACES AND/OR ROADS IN THE ORIGINAL MAP.                                    //
                 //////////////////////////////////////////////////////////////////////////////////
                 Map tempMap = new MapImpl();                  // Create a temporary map
@@ -262,7 +304,7 @@ public class MapEditor implements ActionListener {
     }
 
     /**
-     * Performs a sequence of actions when the save menu item is selected
+     * Save the current map in a file
      * @throws IOException
      */
     private void saveMapAction() throws IOException {
@@ -274,7 +316,8 @@ public class MapEditor implements ActionListener {
     }
 
     /**
-     * Performs a sequence of actions when the append menu item is selected
+     * Open then read a map file and appends the contents of this map file to the this
+     * map object.
      * @throws MapFormatException
      * @throws IOException
      */
@@ -285,7 +328,7 @@ public class MapEditor implements ActionListener {
             if (filename.contains("map")) {
                 //////////////////////////////////////////////////////////////////////////////////
                 //  IF THERE ARE NO ERRORS IN THE MAP FILE THEN READ THE MAP FILE AGAIN         //
-                //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARITAL    //
+                //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARTIAL    //
                 //  PLACES AND/OR ROADS IN THE ORIGINAL MAP.                                    //
                 //////////////////////////////////////////////////////////////////////////////////
                 Map tempMap = new MapImpl((MapImpl)this.map);    // Create a temporary map that has the same places and roads as the original map
