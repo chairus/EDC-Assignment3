@@ -105,7 +105,9 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     public void mouseClicked(MouseEvent e) {
         System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
         System.out.printf("isSelected before: %s%n", isSelected);
-        isSelected = !isSelected;
+        if (!this.place.isStartPlace() && !this.place.isEndPlace()) {
+            isSelected = !isSelected;
+        }
         repaint();
         System.out.printf("isSelected after: %s%n", isSelected);
 
