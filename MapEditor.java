@@ -215,54 +215,13 @@ public class MapEditor implements ActionListener {
         String actionCommand = event.getActionCommand().toLowerCase();
         try {
             if (actionCommand.contains("open")) {
-                System.out.println("Item clicked: Open");
-                String filename = chooseFile(FileOption.OPEN);
-                if (filename != null) {
-                    if (filename.contains("map")) {
-                        //////////////////////////////////////////////////////////////////////////////////
-                        //  IF THERE ARE NO ERRORS IN THE MAP FILE THEN READ THE MAP FILE AGAIN         //
-                        //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARITAL    //
-                        //  PLACES AND/OR ROADS IN THE ORIGINAL MAP.                                    //
-                        //////////////////////////////////////////////////////////////////////////////////
-                        Map tempMap = new MapImpl();                  // Create a temporary map
-                        readMap(filename, tempMap);
-                        map = new MapImpl();                          // Create a new map to discard the places and/or roads of the previous map
-                        this.mapPanel.setMap(map);
-                        this.mapPanel.removeAllPlaceAndPlaceIcon();
-                        this.map.addListener(this.mapPanel);          // Add back the listeners to the map
-                        readMap(filename, this.map);
-                    } else {
-                        throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
-                    }
-                }
-                System.out.printf("Map:%n%s", map.toString());
+                openMapFileAction();
             } else if (actionCommand.contains("save as")) {
-                System.out.println("Item clicked: Save as");
-                String filename = chooseFile(FileOption.SAVE);
-                if (filename != null) {
-                    writeMap(filename);
-                }
+                saveMapAction();
             } else if (actionCommand.contains("append")) {
-                System.out.println("Item clicked: Append");
-                String filename = chooseFile(FileOption.OPEN);
-                if (filename != null) {
-                    if (filename.contains("map")) {
-                        //////////////////////////////////////////////////////////////////////////////////
-                        //  IF THERE ARE NO ERRORS IN THE MAP FILE THEN READ THE MAP FILE AGAIN         //
-                        //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARITAL    //
-                        //  PLACES AND/OR ROADS IN THE ORIGINAL MAP.                                    //
-                        //////////////////////////////////////////////////////////////////////////////////
-                        Map tempMap = new MapImpl((MapImpl)this.map);    // Create a temporary map that has the same places and roads as the original map
-                        readMap(filename, tempMap);
-                        readMap(filename, this.map);
-                    } else {
-                        throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
-                    }
-                }
-                System.out.printf("Map:%n%s", map.toString());
+                appendMapFileAction();
             } else if (actionCommand.contains("quit")) {
-                System.out.println("Item clicked: Quit");
-                System.exit(0);
+                terminateProgramAction();
             }
         } catch (MapFormatException e) {
             System.err.println("MapFormatException: " + e.getMessage());
@@ -271,6 +230,72 @@ public class MapEditor implements ActionListener {
             System.err.println("IOException: " + e.getMessage());
             new ErrorDialog(frame, "Error", e.getMessage());
         }
+    }
+
+    /**
+     * Performs a sequence of actions when the open menu item is selected
+     * @throws MapFormatException
+     * @throws IOException
+     */
+    private void openMapFileAction() throws MapFormatException, IOException {
+        System.out.println("Item clicked: Open");
+        String filename = chooseFile(FileOption.OPEN);
+        if (filename != null) {
+            if (filename.contains("map")) {
+                //////////////////////////////////////////////////////////////////////////////////
+                //  IF THERE ARE NO ERRORS IN THE MAP FILE THEN READ THE MAP FILE AGAIN         //
+                //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARITAL    //
+                //  PLACES AND/OR ROADS IN THE ORIGINAL MAP.                                    //
+                //////////////////////////////////////////////////////////////////////////////////
+                Map tempMap = new MapImpl();                  // Create a temporary map
+                readMap(filename, tempMap);
+                map = new MapImpl();                          // Create a new map to discard the places and/or roads of the previous map
+                this.mapPanel.setMap(map);
+                this.mapPanel.removeAllPlaceAndPlaceIcon();
+                this.map.addListener(this.mapPanel);          // Add back the listeners to the map
+                readMap(filename, this.map);
+            } else {
+                throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
+            }
+        }
+        System.out.printf("Map:%n%s", map.toString());
+    }
+
+    /**
+     * Performs a sequence of actions when the save menu item is selected
+     * @throws IOException
+     */
+    private void saveMapAction() throws IOException {
+        System.out.println("Item clicked: Save as");
+        String filename = chooseFile(FileOption.SAVE);
+        if (filename != null) {
+            writeMap(filename);
+        }
+    }
+
+    /**
+     * Performs a sequence of actions when the append menu item is selected
+     * @throws MapFormatException
+     * @throws IOException
+     */
+    private void appendMapFileAction() throws MapFormatException, IOException {
+        System.out.println("Item clicked: Append");
+        String filename = chooseFile(FileOption.OPEN);
+        if (filename != null) {
+            if (filename.contains("map")) {
+                //////////////////////////////////////////////////////////////////////////////////
+                //  IF THERE ARE NO ERRORS IN THE MAP FILE THEN READ THE MAP FILE AGAIN         //
+                //  AND STORE IT IN THE ORIGINAL MAP. THIS IS TO PREVENT FROM ADDING PARITAL    //
+                //  PLACES AND/OR ROADS IN THE ORIGINAL MAP.                                    //
+                //////////////////////////////////////////////////////////////////////////////////
+                Map tempMap = new MapImpl((MapImpl)this.map);    // Create a temporary map that has the same places and roads as the original map
+                readMap(filename, tempMap);
+                readMap(filename, this.map);
+            } else {
+                throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
+            }
+        }
+        System.out.printf("Map:%n%s", map.toString());
     }
 
     /**
@@ -283,6 +308,14 @@ public class MapEditor implements ActionListener {
     private void readMap(String filename, Map map) throws MapFormatException, IOException {
         Reader reader = openFileForRead(filename);
         mapReaderWriter.read(reader, map);
+    }
+
+    /**
+     * Terminates the program
+     */
+    private void terminateProgramAction() {
+        System.out.println("Item clicked: Quit");
+        System.exit(0);
     }
 
     /**
