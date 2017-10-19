@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
 
@@ -24,25 +25,15 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
-     * Creates a PlaceIcon object that would be displayed on the MapPanel
-     * @param place - The place the place icon is associated with
-     * @return      - The PlaceIcon object
-     */
-    private PlaceIcon createPlaceIcon(Place place) {
-        PlaceIcon placeIcon = new PlaceIcon(place);
-        placeIcon.setBounds(0, 0, Constants.screenSize.width, Constants.screenSize.height);
-        return placeIcon;
-    }
-
-    /**
      * Create and add a PlaceIcon object associated to the given place
      * @param place - The place that was added
      */
     private void addPlaceIcon(Place place) {
-        PlaceIcon placeIcon = createPlaceIcon(place);
+        PlaceIcon placeIcon = new PlaceIcon(place);
         place.addListener(placeIcon);
         this.placeIcons.add(placeIcon);
         this.add(placeIcon);                                // Add a place icon associated to the added place into the JPanel
+        placeIcon.paintComponent(this.getGraphics());
     }
 
     /**
@@ -66,11 +57,12 @@ public class MapPanel extends JPanel implements MapListener {
      * Removes all the places and placeIcons in this map panel.
      */
     public void removeAllPlaceAndPlaceIcon() {
+        // Remove all place icons and mouse listeners
         while (!this.placeIcons.isEmpty()) {
             this.remove(this.placeIcons.get(0));
             this.placeIcons.remove(0);
         }
-        System.out.printf("PlaceIcons size: %d%n", this.placeIcons.size());
+        // Remove all places
         while (!this.places.isEmpty()) {
             this.places.remove(0);
         }
@@ -143,10 +135,19 @@ public class MapPanel extends JPanel implements MapListener {
         this.map = map;
     }
 
+    /**
+     * Returns the placeIcons in this MapPanel object
+     * @return - The placeIcons of this MapPanel object
+     */
+    public List<PlaceIcon> getPlaceIcons() {
+        return this.placeIcons;
+    }
+
     @Override
     public void placesChanged() {
         System.out.println("placesChanged");
         updatePlaces();
+        repaint();
     }
 
     @Override

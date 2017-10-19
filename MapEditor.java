@@ -32,16 +32,6 @@ public class MapEditor implements ActionListener {
      * Create and show the GUI
      */
     public void show() {
-        init();
-    }
-
-    /**
-     * Initializes the Graphical User Interface
-     */
-    private void init() {
-        frame = new JFrame();
-        frame.setTitle("Travel Maps");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         createAndShowGui();
     }
 
@@ -50,12 +40,16 @@ public class MapEditor implements ActionListener {
      * GUI.
      */
     private void createAndShowGui() {
+        frame = new JFrame();
+        frame.setTitle("Travel Maps");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JMenuBar menuBar;
         menuBar = createMenuBar();
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Set the size of the frame to full screen
         frame.pack();
         frame.setVisible(true);
         frame.setResizable(true);
+//        mapPanel.setBounds(0,0,Constants.screenSize.width,Constants.screenSize.height);
         frame.add(mapPanel);
         frame.setJMenuBar(menuBar);
     }
@@ -238,7 +232,6 @@ public class MapEditor implements ActionListener {
                         this.mapPanel.removeAllPlaceAndPlaceIcon();
                         this.map.addListener(this.mapPanel);          // Add back the listeners to the map
                         readMap(filename, this.map);
-
                     } else {
                         throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
                     }
