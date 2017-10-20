@@ -97,14 +97,20 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         }
         if (this.place.isStartPlace()) {
             selectedColor = Color.BLUE;
-            if (!this.isSelected) {
-                this.isSelected = true;
+//            if (!this.isSelected) {
+//                this.isSelected = true;
+//            }
+            if (this.isSelected) {
+                this.isSelected = false;
             }
         }
         if (this.place.isEndPlace()) {
             selectedColor = Color.GREEN;
-            if (!this.isSelected) {
-                this.isSelected = true;
+//            if (!this.isSelected) {
+//                this.isSelected = true;
+//            }
+            if (this.isSelected) {
+                this.isSelected = false;
             }
         }
         return selectedColor;

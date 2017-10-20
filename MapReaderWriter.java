@@ -169,6 +169,10 @@ public class MapReaderWriter implements MapIo {
     }
 
     private void setStartPlace(String[] str, Map mp, int lineNr) throws MapFormatException {
+        if (mp.getStartPlace() != null) {       // There is already a start place so don't set it
+            return;
+        }
+
         if (str.length != 2) {
             throw new MapFormatException(lineNr, "Missing start place information.");
         }
@@ -188,6 +192,10 @@ public class MapReaderWriter implements MapIo {
     }
 
     private void setEndPlace(String[] str, Map mp, int lineNr) throws MapFormatException {
+        if (mp.getEndPlace() != null) {       // There is already an end place so don't set it
+            return;
+        }
+
         if (str.length != 2) {
             throw new MapFormatException(lineNr, "Missing end place information.");
         }

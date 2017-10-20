@@ -255,56 +255,6 @@ public class MapEditor implements ActionListener {
     }
 
     /**
-     * Extracts the start or end place from the selected place icons. If there are more
-     * than one place selected an error dialog box will pop up that informs the user
-     * that only one place can be selected.
-     * @param label - The label(i.e. start/end) of the place to be extracted
-     * @return      - The extracted place
-     */
-    private Place extractStartEndPlace(PlaceLabel label) {
-        Place startEndPlace = null;
-        List<PlaceIcon> selectedPlaceIcons = mapPanel.getSelectedPlaceIcon();
-        List<PlaceIcon> candidatePlaceIcons = new ArrayList<>();
-
-        System.out.printf("Number of selected places: %d%n", selectedPlaceIcons.size());
-        for (PlaceIcon placeIcon: selectedPlaceIcons) {
-            if (!placeIcon.getPlace().isStartPlace() && !placeIcon.getPlace().isEndPlace()) {
-                candidatePlaceIcons.add(placeIcon);
-                continue;
-            }
-            /////////////////////////////////////////////////////////////////////////////
-            //  Check if the place is already a start/end place if it is either then   //
-            //  return a null to prevent the map panel to be repainted.                //
-            /////////////////////////////////////////////////////////////////////////////
-            switch (label) {
-                case START:
-                    if (placeIcon.getPlace().isStartPlace()) {
-                        new InfoDialog(frame, "Warning", "A start place is already selected. Please unset it first then select a new start place.");
-                        return null;
-                    }
-                    break;
-                case END:
-                    if (placeIcon.getPlace().isEndPlace()) {
-                        new InfoDialog(frame, "Warning", "An end place is already selected. Please unset it first then select a new end place.");
-                        return null;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (candidatePlaceIcons.size() > 1) {        // There are multiple places currently selected
-            new InfoDialog(frame, "Warning", "Only one place can be selected");
-        }
-        if (candidatePlaceIcons.size() == 1) {
-            startEndPlace = candidatePlaceIcons.get(0).getPlace();
-
-        }
-        return startEndPlace;
-    }
-
-    /**
      * Sets a selected place to be the end place. If there are more than one
      * place selected an error dialog box will pop up that informs the user
      * that only one place can be selected.
@@ -319,10 +269,65 @@ public class MapEditor implements ActionListener {
     }
 
     /**
+     * Extracts the start or end place from the selected place icons. If there are more
+     * than one place selected an error dialog box will pop up that informs the user
+     * that only one place can be selected.
+     * @param label - The label(i.e. start/end) of the place to be extracted
+     * @return      - The extracted place
+     */
+    private Place extractStartEndPlace(PlaceLabel label) {
+        Place startEndPlace = null;
+        List<PlaceIcon> selectedPlaceIcons = mapPanel.getSelectedPlaceIcon();
+        List<PlaceIcon> candidatePlaceIcons = new ArrayList<>();
+
+        System.out.printf("Number of selected places: %d%n", selectedPlaceIcons.size());
+        ///////////////////////////////////////////////////////////////////////////
+        //  Check if there place is already a start/end place if there is then   //
+        //  return a null to prevent the map panel to be repainted.              //
+        ///////////////////////////////////////////////////////////////////////////
+        switch (label) {
+            case START:
+                if (map.getStartPlace() != null) {
+                    new InfoDialog(frame, "Warning", "A start place is already selected. Please unset it first then select a new start place.");
+                    return null;
+                }
+                break;
+            case END:
+                if (map.getEndPlace() != null) {
+                    new InfoDialog(frame, "Warning", "An end place is already selected. Please unset it first then select a new end place.");
+                    return null;
+                }
+                break;
+            default:
+                break;
+        }
+        for (PlaceIcon placeIcon: selectedPlaceIcons) {
+            if (!placeIcon.getPlace().isStartPlace() && !placeIcon.getPlace().isEndPlace()) {
+                candidatePlaceIcons.add(placeIcon);
+                continue;
+            }
+        }
+
+        if (candidatePlaceIcons.size() > 1) {        // There are multiple places currently selected
+            new InfoDialog(frame, "Warning", "Only one place can be selected");
+        }
+        if (candidatePlaceIcons.size() == 1) {
+            startEndPlace = candidatePlaceIcons.get(0).getPlace();
+
+        }
+        return startEndPlace;
+    }
+
+    /**
      * Unsets the start place
      */
     private void unsetStartPlaceAction() {
         System.out.println("Item clicked: Unset start");
+        MapImpl.PlaceImpl startPlace = (MapImpl.PlaceImpl)map.getStartPlace();
+        if (startPlace != null) {
+            startPlace.setStartPlace(false);
+            map.setStartPlace(null);
+        }
     }
 
     /**
@@ -330,6 +335,11 @@ public class MapEditor implements ActionListener {
      */
     private void unsetEndPlaceAction() {
         System.out.println("Item clicked: Unset end");
+        MapImpl.PlaceImpl endPlace = (MapImpl.PlaceImpl)map.getEndPlace();
+        if (endPlace != null) {
+            endPlace.setEndPlace(false);
+            map.setEndPlace(null);
+        }
     }
 
     /**
