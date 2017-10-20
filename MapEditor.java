@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -228,7 +229,7 @@ public class MapEditor implements ActionListener {
             } else if (actionCommand.contains("unset end")) {
                 unsetEndPlaceAction();
             }  else if (actionCommand.contains("set start")) {
-            setStartPlaceAction();
+                setStartPlaceAction();
             } else if (actionCommand.contains("set end")) {
                 setEndPlaceAction();
             }
@@ -242,19 +243,65 @@ public class MapEditor implements ActionListener {
     }
 
     /**
-     * Sets a selected place to be the start place. If there are more than one
-     * place selected an error dialog box will pop up that informs the user
-     * that only one place can be selected.
+     * Sets a selected place to be the start place.
      */
     private void setStartPlaceAction() {
         System.out.println("Item clicked: Set start");
+        MapImpl.PlaceImpl startPlace = (MapImpl.PlaceImpl)extractStartEndPlace(PlaceLabel.START);
+        if (startPlace != null) {
+            startPlace.setStartPlace(true);
+            map.setStartPlace(startPlace);
+        }
+    }
+
+    /**
+     * Extracts the start or end place from the selected place icons. If there are more
+     * than one place selected an error dialog box will pop up that informs the user
+     * that only one place can be selected.
+     * @param label - The label(i.e. start/end) of the place to be extracted
+     * @return      - The extracted place
+     */
+    private Place extractStartEndPlace(PlaceLabel label) {
+        Place startEndPlace = null;
         List<PlaceIcon> selectedPlaceIcons = mapPanel.getSelectedPlaceIcon();
-        if (selectedPlaceIcons.size() > 1) {        // There are multiple places currently selected
+        List<PlaceIcon> candidatePlaceIcons = new ArrayList<>();
+
+        System.out.printf("Number of selected places: %d%n", selectedPlaceIcons.size());
+        for (PlaceIcon placeIcon: selectedPlaceIcons) {
+            if (!placeIcon.getPlace().isStartPlace() && !placeIcon.getPlace().isEndPlace()) {
+                candidatePlaceIcons.add(placeIcon);
+                continue;
+            }
+            /////////////////////////////////////////////////////////////////////////////
+            //  Check if the place is already a start/end place if it is either then   //
+            //  return a null to prevent the map panel to be repainted.                //
+            /////////////////////////////////////////////////////////////////////////////
+            switch (label) {
+                case START:
+                    if (placeIcon.getPlace().isStartPlace()) {
+                        new InfoDialog(frame, "Warning", "A start place is already selected. Please unset it first then select a new start place.");
+                        return null;
+                    }
+                    break;
+                case END:
+                    if (placeIcon.getPlace().isEndPlace()) {
+                        new InfoDialog(frame, "Warning", "An end place is already selected. Please unset it first then select a new end place.");
+                        return null;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (candidatePlaceIcons.size() > 1) {        // There are multiple places currently selected
             new InfoDialog(frame, "Warning", "Only one place can be selected");
         }
-        if (selectedPlaceIcons.size() == 1) {
-            ((MapImpl.PlaceImpl)selectedPlaceIcons.get(0).getPlace()).setStartPlace(true);
+        if (candidatePlaceIcons.size() == 1) {
+            startEndPlace = candidatePlaceIcons.get(0).getPlace();
+
         }
+        return startEndPlace;
     }
 
     /**
@@ -264,6 +311,11 @@ public class MapEditor implements ActionListener {
      */
     private void setEndPlaceAction() {
         System.out.println("Item clicked: Set end");
+        MapImpl.PlaceImpl endPlace = (MapImpl.PlaceImpl)extractStartEndPlace(PlaceLabel.END);
+        if (endPlace != null) {
+            endPlace.setEndPlace(true);
+            map.setEndPlace(endPlace);
+        }
     }
 
     /**
@@ -505,6 +557,14 @@ public class MapEditor implements ActionListener {
             return selectedFile.getAbsolutePath();
         }
         return null;
+    }
+
+    /**
+     * An enum type that stores the label of the place(i.e. start/end)
+     */
+    private enum PlaceLabel {
+        START,  // The place is the start place
+        END,    // The place is the end place
     }
 
     /**

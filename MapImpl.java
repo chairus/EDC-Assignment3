@@ -405,9 +405,9 @@ public class MapImpl implements Map {
      * @author cyrusvillacampa
      */
     public class PlaceImpl implements Place {
-        Set<Road> incomingRoads;    // contains all roads that reach this place
-        String placeName;   // contains the name of the place
-        int xPos, yPos; // contains the x and y coordinate of the place
+        Set<Road> incomingRoads;            // contains all roads that reach this place
+        String placeName;                   // contains the name of the place
+        int xPos, yPos;                     // contains the x and y coordinate of the place
         List<PlaceListener> placeListeners;
         boolean isStart, isEnd;
 
@@ -417,7 +417,8 @@ public class MapImpl implements Map {
             this.xPos = xPos;
             this.yPos = yPos;
             this.placeListeners = new ArrayList<>();
-            this.isStart = this.isEnd = false;
+            this.isStart = false;
+            this.isEnd = false;
         }
 
         //Add the PlaceListener pl to this place. 

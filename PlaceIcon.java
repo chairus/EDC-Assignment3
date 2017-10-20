@@ -71,16 +71,10 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     protected void paintComponent(Graphics g) {
         System.out.println("[PlaceIcon] paintComponent called");
-        super.paintComponent(g);    // Customize what to paint after calling this
-        Color fillColor = this.getBackground();
-        if (isSelected && !this.place.isStartPlace() && !this.place.isEndPlace()) {
-            fillColor = Color.CYAN;
-        }
-        if (isSelected && this.place.isStartPlace()) {
-            fillColor = Color.BLUE;
-        }
-        if (isSelected && this.place.isEndPlace()) {
-            fillColor = Color.GREEN;
+        super.paintComponent(g);            // Customize what to paint after calling this
+        Color fillColor = selectColor();
+        if (fillColor == null) {            // The place is not in one of the state {SELECTED,START,END}
+            fillColor = this.getBackground();
         }
         g.setColor(fillColor);
         g.fillRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
@@ -89,6 +83,31 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         g2.setColor(Color.BLACK);
         g2.setStroke(new BasicStroke(thickness));
         g2.drawRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
+    }
+
+    /**
+     * Selects the color depending if a place is selected or is the start
+     * place or is the end place
+     * @return  - The selected color(CYAN for selected place, BLUE for start, GREEN for end)
+     */
+    private Color selectColor() {
+        Color selectedColor = null;
+        if (this.isSelected && !this.place.isStartPlace() && !this.place.isEndPlace()) {
+            selectedColor = Color.CYAN;
+        }
+        if (this.place.isStartPlace()) {
+            selectedColor = Color.BLUE;
+            if (!this.isSelected) {
+                this.isSelected = true;
+            }
+        }
+        if (this.place.isEndPlace()) {
+            selectedColor = Color.GREEN;
+            if (!this.isSelected) {
+                this.isSelected = true;
+            }
+        }
+        return selectedColor;
     }
 
     //////////////////////
@@ -105,12 +124,14 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     public void mouseClicked(MouseEvent e) {
         System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
         System.out.printf("isSelected before: %s%n", isSelected);
+        System.out.printf("isStartPlace: %s%n", this.place.isStartPlace());
+        System.out.printf("isEndPlace: %s%n", this.place.isEndPlace());
         if (!this.place.isStartPlace() && !this.place.isEndPlace()) {
             isSelected = !isSelected;
+            repaint();
         }
-        repaint();
-        System.out.printf("isSelected after: %s%n", isSelected);
 
+        System.out.printf("isSelected after: %s%n", isSelected);
     }
 
     /**

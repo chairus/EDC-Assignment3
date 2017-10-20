@@ -122,7 +122,10 @@ public class MapPanel extends JPanel implements MapListener {
     public List<PlaceIcon> getSelectedPlaceIcon() {
         List<PlaceIcon> selectedPlaceIcons = new ArrayList<>();
         for (PlaceIcon placeIcon: this.placeIcons) {
-            if (placeIcon.isSelected() && !placeIcon.getPlace().isEndPlace() && !placeIcon.getPlace().isStartPlace()) {
+//            if (placeIcon.isSelected() && !placeIcon.getPlace().isEndPlace() && !placeIcon.getPlace().isStartPlace()) {
+//                selectedPlaceIcons.add(placeIcon);
+//            }
+            if (placeIcon.isSelected()) {
                 selectedPlaceIcons.add(placeIcon);
             }
         }
@@ -213,7 +216,7 @@ public class MapPanel extends JPanel implements MapListener {
      * @param p2 - The second place
      * @return   - True if they are equal, false otherwise
      */
-    private boolean areEqual(Place p1, Place p2) {
+    private static boolean areEqual(Place p1, Place p2) {
         if (p1.getName().equalsIgnoreCase(p2.getName()) &&
                 p1.getX() == p2.getX() &&
                 p1.getY() == p2.getY()) {
