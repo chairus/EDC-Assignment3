@@ -2,16 +2,18 @@ import javax.swing.JComponent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 /**
  * This class
  * @author cyrusvillacampa
  */
 
-public class PlaceIcon extends JComponent implements PlaceListener, MouseListener {
-    private int x, y;           // X and Y coordinates of the place
-    private Place place;        // The place that this place listener is listening to
-    private boolean isSelected; // A value that determines if this place icon is selected
+public class PlaceIcon extends JComponent implements PlaceListener, MouseListener, MouseMotionListener {
+    private int x, y;                           // X and Y coordinates of the place
+    private Place place;                        // The place that this place listener is listening to
+    private boolean isSelected;                 // A value that determines if this place icon is selected
+    private Point mousePressedBoundsLocation;   // The location, inside the bounds of the place icon, of the mouse when pressed
 
     @SuppressWarnings("Default constructor not available")
     private PlaceIcon() {}
@@ -25,6 +27,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         this.place = place;
         this.updatePlaceIconCoordinate();
         this.addMouseListener(this);
+        this.addMouseMotionListener(this);
         this.isSelected = false;
     }
 
@@ -34,7 +37,9 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     private void updatePlaceIconCoordinate() {
         this.x = place.getX();
         this.y = place.getY();
-        this.setBounds(this.x, this.y, Constants.placeWidth, Constants.placeHeight);
+        // To set the location of the place on the center of the bounds
+        this.setBounds(this.x - (Constants.placeWidth/2), this.y - (Constants.placeHeight/2), Constants.placeWidth, Constants.placeHeight);
+//        this.setBounds(this.x, this.y, Constants.placeWidth, Constants.placeHeight);
     }
 
     /**
@@ -97,18 +102,12 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         }
         if (this.place.isStartPlace()) {
             selectedColor = Color.BLUE;
-//            if (!this.isSelected) {
-//                this.isSelected = true;
-//            }
             if (this.isSelected) {
                 this.isSelected = false;
             }
         }
         if (this.place.isEndPlace()) {
             selectedColor = Color.GREEN;
-//            if (!this.isSelected) {
-//                this.isSelected = true;
-//            }
             if (this.isSelected) {
                 this.isSelected = false;
             }
@@ -148,6 +147,10 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void mousePressed(MouseEvent e) {
         System.out.printf("Mouse pressed%n");
+        mousePressedBoundsLocation = e.getPoint();
+        System.out.printf("Mouse position at(x,y): (%d,%d)%n", mousePressedBoundsLocation.x, mousePressedBoundsLocation.y);
+        Point screenLocation = e.getLocationOnScreen();
+        System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
     }
 
     /**
@@ -178,5 +181,49 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void mouseExited(MouseEvent e) {
         System.out.printf("Mouse exited%n");
+    }
+
+    //////////////////////////////
+    //  MOUSE MOTION LISTENERS  //
+    //////////////////////////////
+
+    /**
+     * Invoked when a mouse button is pressed on a component and then
+     * dragged.  <code>MOUSE_DRAGGED</code> events will continue to be
+     * delivered to the component where the drag originated until the
+     * mouse button is released (regardless of whether the mouse position
+     * is within the bounds of the component).
+     * <p>
+     * Due to platform-dependent Drag&amp;Drop implementations,
+     * <code>MOUSE_DRAGGED</code> events may not be delivered during a native
+     * Drag&amp;Drop operation.
+     *
+     * @param e
+     */
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        System.out.printf("Mouse dragged%n");
+        System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+        Point screenLocation = e.getLocationOnScreen();
+        Point originLocation = new Point(this.place.getX(), this.place.getY());
+        System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+        int dx = screenLocation.x - originLocation.x;                     // Change in x direction
+        int dy = screenLocation.y - originLocation.y - 65;                     // Change in y direction
+        System.out.printf("New place location(x,y): (%d,%d)%n", this.place.getX() + dx, this.place.getY() + dy);
+        this.place.moveBy(dx, dy);
+    }
+
+    /**
+     * Invoked when the mouse cursor has been moved onto a component
+     * but no buttons have been pushed.
+     *
+     * @param e
+     */
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        System.out.printf("Mouse Moved%n");
+        System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+        Point screenLocation = e.getLocationOnScreen();
+        System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
     }
 }

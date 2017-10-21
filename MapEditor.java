@@ -281,10 +281,10 @@ public class MapEditor implements ActionListener {
         List<PlaceIcon> candidatePlaceIcons = new ArrayList<>();
 
         System.out.printf("Number of selected places: %d%n", selectedPlaceIcons.size());
-        ///////////////////////////////////////////////////////////////////////////
-        //  Check if there place is already a start/end place if there is then   //
-        //  return a null to prevent the map panel to be repainted.              //
-        ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        //  Check if a place is already a start/end place if there is then   //
+        //  return a null to prevent the map panel to be repainted.          //
+        ///////////////////////////////////////////////////////////////////////
         switch (label) {
             case START:
                 if (map.getStartPlace() != null) {
