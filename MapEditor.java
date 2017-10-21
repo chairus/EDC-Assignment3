@@ -47,12 +47,13 @@ public class MapEditor implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JMenuBar menuBar;
         menuBar = createMenuBar();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Set the size of the frame to full screen
-        frame.pack();
+//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Set the size of the frame to full screen
+        frame.setPreferredSize(Constants.screenSize);   // Set the size of the frame to full screen
         frame.setJMenuBar(menuBar);
+        frame.add(mapPanel);
+        frame.pack();
         frame.setVisible(true);
         frame.setResizable(true);
-        frame.add(mapPanel);
     }
 
     /**

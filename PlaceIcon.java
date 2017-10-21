@@ -13,7 +13,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     private int x, y;                           // X and Y coordinates of the place
     private Place place;                        // The place that this place listener is listening to
     private boolean isSelected;                 // A value that determines if this place icon is selected
-    private Point mousePressedBoundsLocation;   // The location, inside the bounds of the place icon, of the mouse when pressed
+    private int xDiff, yDiff;                   // Difference between the x and y coordinate of the exact position of the place icon and its location on the screen
 
     @SuppressWarnings("Default constructor not available")
     private PlaceIcon() {}
@@ -40,7 +40,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         // To set the location of the place on the center of the bounds
         this.setBounds(this.x - (Constants.placeWidth/2), this.y - (Constants.placeHeight/2), Constants.placeWidth, Constants.placeHeight);
 //        this.setBounds(this.x, this.y, Constants.placeWidth, Constants.placeHeight);
-//        System.out.printf("PlaceIcon location(x,y): (%d,%d)%n", this.getX(), this.getY());
     }
 
     /**
@@ -128,7 +127,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-//        System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
+        System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
 //        System.out.printf("isSelected before: %s%n", isSelected);
 //        System.out.printf("isStartPlace: %s%n", this.place.isStartPlace());
 //        System.out.printf("isEndPlace: %s%n", this.place.isEndPlace());
@@ -137,7 +136,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
             repaint();
         }
 
-        System.out.printf("isSelected after: %s%n", isSelected);
+//        System.out.printf("isSelected after: %s%n", isSelected);
     }
 
     /**
@@ -148,8 +147,10 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void mousePressed(MouseEvent e) {
         System.out.printf("[ PlaceIcon ] Mouse pressed%n");
-        mousePressedBoundsLocation = e.getPoint();
-//        System.out.printf("Mouse position at(x,y): (%d,%d)%n", mousePressedBoundsLocation.x, mousePressedBoundsLocation.y);
+        Point screenLocation = e.getLocationOnScreen();
+//        System.out.printf("[ PlaceIcon ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+        xDiff = screenLocation.x - this.place.getX();
+        yDiff = screenLocation.y - this.place.getY();
     }
 
     /**
@@ -202,12 +203,14 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void mouseDragged(MouseEvent e) {
         System.out.printf("[ PlaceIcon ] Mouse dragged%n");
-//        System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+//        System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getPoint().getX(), e.getPoint().getY());
         Point screenLocation = e.getLocationOnScreen();
         Point originLocation = new Point(this.place.getX(), this.place.getY());
 //        System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
-        int dx = screenLocation.x - originLocation.x - (this.mousePressedBoundsLocation.x - Constants.placeWidth/2);       // Change in x direction
-        int dy = screenLocation.y - originLocation.y - 67 - (this.mousePressedBoundsLocation.y - Constants.placeHeight/2);  // Change in y direction
+//        int dx = screenLocation.x - originLocation.x - this.xDiff - (this.mousePressedBoundsLocation.x - Constants.placeWidth/2);       // Change in x direction
+//        int dy = screenLocation.y - originLocation.y - this.yDiff - (this.mousePressedBoundsLocation.y - Constants.placeHeight/2);  // Change in y direction
+        int dx = screenLocation.x - originLocation.x - this.xDiff;       // Change in x direction
+        int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
 //        System.out.printf("New place location(x,y): (%d,%d)%n", this.place.getX() + dx, this.place.getY() + dy);
         this.place.moveBy(dx, dy);
     }

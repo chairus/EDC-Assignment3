@@ -33,6 +33,7 @@ public class MapPanel extends JPanel implements MapListener {
         setBounds(0, 0, Constants.screenSize.width, Constants.screenSize.height);
         addMouseListeners();
         addMouseMotionListeners();
+        System.out.printf("MapPanel size(width,height): (%d,%d)%n", this.getSize().width, this.getSize().height);
     }
 
     /**
@@ -331,8 +332,8 @@ public class MapPanel extends JPanel implements MapListener {
     @Override
     protected void paintComponent(Graphics g) {
         System.out.printf("[ MapPanel ] paintComponent called%n");
-        System.out.printf("[ MapPanel ] startPoint(x,y): (%d,%d)%n", startPoint.x, startPoint.y);
-        System.out.printf("[ MapPanel ] endPoint(x,y): (%d,%d)%n", endPoint.x, endPoint.y);
+//        System.out.printf("[ MapPanel ] startPoint(x,y): (%d,%d)%n", startPoint.x, startPoint.y);
+//        System.out.printf("[ MapPanel ] endPoint(x,y): (%d,%d)%n", endPoint.x, endPoint.y);
         super.paintComponent(g);        // Customize what to paint after calling this
         g.setColor(Color.BLACK);
         float thickness = 2.0f;
