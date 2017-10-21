@@ -94,7 +94,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     /**
      * Selects the color depending if a place is selected or is the start
      * place or is the end place
-     * @return  - The selected color(CYAN for selected place, BLUE for start, GREEN for end)
+     * @return  - The selected color(BLUE for selected place, RED for start, GREEN for end)
      */
     private Color selectColor() {
         Color selectedColor = null;
