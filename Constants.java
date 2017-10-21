@@ -5,7 +5,7 @@ import java.awt.*;
  */
 
 public class Constants {
-    public static int placeWidth = 30;
-    public static int placeHeight = 30;
-    public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    public final static int placeWidth = 20;
+    public final static int placeHeight = 20;
+    public final static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 }
