@@ -207,8 +207,8 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         Point screenLocation = e.getLocationOnScreen();
         Point originLocation = new Point(this.place.getX(), this.place.getY());
         System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
-        int dx = screenLocation.x - originLocation.x;                     // Change in x direction
-        int dy = screenLocation.y - originLocation.y - 65;                     // Change in y direction
+        int dx = screenLocation.x - originLocation.x;       // Change in x direction
+        int dy = screenLocation.y - originLocation.y - 65;  // Change in y direction
         System.out.printf("New place location(x,y): (%d,%d)%n", this.place.getX() + dx, this.place.getY() + dy);
         this.place.moveBy(dx, dy);
     }
