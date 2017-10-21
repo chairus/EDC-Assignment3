@@ -122,9 +122,6 @@ public class MapPanel extends JPanel implements MapListener {
     public List<PlaceIcon> getSelectedPlaceIcon() {
         List<PlaceIcon> selectedPlaceIcons = new ArrayList<>();
         for (PlaceIcon placeIcon: this.placeIcons) {
-//            if (placeIcon.isSelected() && !placeIcon.getPlace().isEndPlace() && !placeIcon.getPlace().isStartPlace()) {
-//                selectedPlaceIcons.add(placeIcon);
-//            }
             if (placeIcon.isSelected()) {
                 selectedPlaceIcons.add(placeIcon);
             }
