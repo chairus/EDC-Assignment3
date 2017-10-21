@@ -147,7 +147,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.printf("Mouse pressed%n");
+        System.out.printf("[ PlaceIcon ] Mouse pressed%n");
         mousePressedBoundsLocation = e.getPoint();
 //        System.out.printf("Mouse position at(x,y): (%d,%d)%n", mousePressedBoundsLocation.x, mousePressedBoundsLocation.y);
     }
@@ -159,7 +159,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.printf("Mouse released%n");
+        System.out.printf("[ PlaceIcon ] Mouse released%n");
     }
 
     /**
@@ -169,7 +169,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.printf("Mouse entered%n");
+        System.out.printf("[ PlaceIcon ] Mouse entered%n");
     }
 
     /**
@@ -179,7 +179,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseExited(MouseEvent e) {
-        System.out.printf("Mouse exited%n");
+        System.out.printf("[ PlaceIcon ] Mouse exited%n");
     }
 
     //////////////////////////////
@@ -201,7 +201,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.printf("Mouse dragged%n");
+        System.out.printf("[ PlaceIcon ] Mouse dragged%n");
 //        System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
         Point screenLocation = e.getLocationOnScreen();
         Point originLocation = new Point(this.place.getX(), this.place.getY());
@@ -220,9 +220,9 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseMoved(MouseEvent e) {
-        System.out.printf("Mouse Moved%n");
-        System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+        System.out.printf("[ PlaceIcon ] Mouse Moved%n");
+        System.out.printf("[ PlaceIcon ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
         Point screenLocation = e.getLocationOnScreen();
-        System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+        System.out.printf("[ PlaceIcon ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
     }
 }

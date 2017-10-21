@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.*;
 import java.util.List;
 
@@ -11,9 +12,12 @@ import java.util.List;
  */
 
 public class MapPanel extends JPanel implements MapListener {
-    List<Place> places;          // The list of places currently being displayed by this MapPanel
-    List<PlaceIcon> placeIcons; // The list of listeners to each place in the list of places
-    Map map;                    // A map object that stores the current map
+    private List<Place> places;             // The list of places currently being displayed by this MapPanel
+    private List<PlaceIcon> placeIcons;     // The list of listeners to each place in the list of places
+    private Map map;                        // A map object that stores the current map
+    private Point startPoint, endPoint;     // Start and end point of the selection box
+    private Rectangle rectangleStroke;      // Represents how the rectangle was drawn
+
 
     /**
      * Constructor
@@ -22,9 +26,13 @@ public class MapPanel extends JPanel implements MapListener {
         this.map = map;
         this.places = new ArrayList<>(map.getPlaces());
         this.placeIcons = new ArrayList<>();
+        this.startPoint = new Point();
+        this.endPoint = new Point();
+        this.rectangleStroke = Rectangle.DOWN_RIGHT;
         setLayout(null);
         setBounds(0, 0, Constants.screenSize.width, Constants.screenSize.height);
         addMouseListeners();
+        addMouseMotionListeners();
     }
 
     /**
@@ -144,7 +152,7 @@ public class MapPanel extends JPanel implements MapListener {
              */
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
+                System.out.printf("[ MapPanel ] Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
                 boolean hasDeselected = clearSelectedPlaceIcons();
                 if (hasDeselected) repaint();
             }
@@ -156,7 +164,11 @@ public class MapPanel extends JPanel implements MapListener {
              */
             @Override
             public void mousePressed(MouseEvent e) {
-                // DOESN'T DO ANYTHING FOR NOW
+                System.out.printf("[ MapPanel ] Mouse Pressed%n");
+                startPoint = e.getPoint();
+                System.out.printf("[ MapPanel ] Mouse position at(x,y): (%f,%f)%n", startPoint.getX(), startPoint.getY());
+                Point screenLocation = e.getLocationOnScreen();
+                System.out.printf("[ MapPanel ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
             }
 
             /**
@@ -166,7 +178,13 @@ public class MapPanel extends JPanel implements MapListener {
              */
             @Override
             public void mouseReleased(MouseEvent e) {
-                // DOESN'T DO ANYTHING FOR NOW
+                System.out.printf("[ MapPanel ] Mouse Released%n");
+                System.out.printf("[ MapPanel ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+                Point screenLocation = e.getLocationOnScreen();
+                System.out.printf("[ MapPanel ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+                endPoint = new Point(-1,-1);      // To remove the drawn rectangle
+                rectangleStroke = Rectangle.DOWN_RIGHT; //  Reset the stroke so that a new rectangle can be drawn
+                repaint();
             }
 
             /**
@@ -189,6 +207,56 @@ public class MapPanel extends JPanel implements MapListener {
                 // DOESN'T DO ANYTHING FOR NOW
             }
         });
+    }
+
+    /**
+     * This method adds mouse motion listeners
+     */
+    private void addMouseMotionListeners() {
+        this.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateRectangleStartEndPoint(e);
+                System.out.printf("[ MapPanel ] Mouse Dragged%n");
+                System.out.printf("[ MapPanel ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+                Point screenLocation = e.getLocationOnScreen();
+                System.out.printf("[ MapPanel ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+                setStartEndPoint();
+                repaint();
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+//                System.out.printf("Mouse Moved%n");
+//                System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+//                Point screenLocation = e.getLocationOnScreen();
+//                System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+            }
+        });
+    }
+
+    /**
+     * Updates one of the end point of the drawn rectangle
+     */
+    private void updateRectangleStartEndPoint(MouseEvent e) {
+        switch (rectangleStroke) {
+            case DOWN_RIGHT:
+                endPoint = e.getPoint();
+                break;
+            case UP_LEFT:
+                startPoint = e.getPoint();
+                break;
+            case UP_RIGHT:
+                startPoint.y = e.getPoint().y;
+                endPoint.x = e.getPoint().x;
+                break;
+            case DOWN_LEFT:
+                startPoint.x = e.getPoint().x;
+                endPoint.y = e.getPoint().y;
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -223,11 +291,56 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
+     * Sets the start and end point of the rectangle
+     */
+    private void setStartEndPoint() {
+        if (endPoint.x >= 0 && endPoint.y >= 0) {
+            if (startPoint.x > endPoint.x && startPoint.y > endPoint.y) {       // When mouse is dragged up-and-left/left-and-up
+                if (rectangleStroke != Rectangle.UP_LEFT) {
+                    Point tempPoint = startPoint;
+                    startPoint = endPoint;
+                    endPoint = tempPoint;
+                    rectangleStroke = Rectangle.UP_LEFT;
+                }
+            } else if (startPoint.x > endPoint.x && startPoint.y < endPoint.y) {    // When mouse is dragged down-and-left/left-and-down
+                if (rectangleStroke != Rectangle.DOWN_LEFT) {
+                    // Switch their x-coordinate
+                    Point tempPoint = new Point(startPoint);
+                    endPoint.x = tempPoint.x;
+                    rectangleStroke = Rectangle.DOWN_LEFT;
+                }
+            } else if (startPoint.x < endPoint.x && startPoint.y > endPoint.y) {    // When mouse is dragged up-and-right/right-and-up
+                if (rectangleStroke != Rectangle.UP_RIGHT) {
+                    // Switch their y-coordinate
+                    Point tempPoint = new Point(startPoint);
+                    endPoint.y = tempPoint.y;
+                    rectangleStroke = Rectangle.UP_RIGHT;
+                }
+            }
+        }
+    }
+
+    /**
      * Set this map object with the given argument
      * @param map - The map object to set to
      */
     public void setMap(Map map) {
         this.map = map;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        System.out.printf("[ MapPanel ] paintComponent called%n");
+        System.out.printf("[ MapPanel ] startPoint(x,y): (%d,%d)%n", startPoint.x, startPoint.y);
+        System.out.printf("[ MapPanel ] endPoint(x,y): (%d,%d)%n", endPoint.x, endPoint.y);
+        super.paintComponent(g);        // Customize what to paint after calling this
+        g.setColor(Color.BLACK);
+        float thickness = 2.0f;
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(thickness));
+        int width = this.endPoint.x - this.startPoint.x;
+        int height = this.endPoint.y - this.startPoint.y;
+        g2.drawRect(this.startPoint.x, this.startPoint.y, width, height);
     }
 
     @Override
@@ -247,5 +360,17 @@ public class MapPanel extends JPanel implements MapListener {
     public void otherChanged() {
         System.out.println("otherChanged");
         repaint();
+    }
+
+    /**
+     * State that represents if the rectangle currently being
+     * drawn started from up-left/left-up, down-left/left-down,
+     * up-right/right-up, down-right/right-down.
+     */
+    private enum Rectangle {
+        UP_LEFT,
+        UP_RIGHT,
+        DOWN_LEFT,
+        DOWN_RIGHT,
     }
 }
