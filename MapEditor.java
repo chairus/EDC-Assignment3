@@ -1,9 +1,7 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.List;
  */
 
 public class MapEditor implements ActionListener {
-    private JFrame frame;
+    public static JFrame frame;
     private MapPanel mapPanel;
     private Map map;
     private MapReaderWriter mapReaderWriter;
@@ -47,8 +45,8 @@ public class MapEditor implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JMenuBar menuBar;
         menuBar = createMenuBar();
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Set the size of the frame to full screen
         frame.setPreferredSize(Constants.SCREEN_SIZE);   // Set the size of the frame to full screen
+        mapPanel.setBounds(0, 0, frame.getWidth(), frame.getHeight());
         frame.setJMenuBar(menuBar);
         frame.add(mapPanel);
         frame.pack();

@@ -31,7 +31,7 @@ public class MapPanel extends JPanel implements MapListener {
         this.endPoint = new Point();
         this.rectangleStroke = Rectangle.DOWN_RIGHT;
         setLayout(null);
-        setBounds(0, 0, Constants.SCREEN_SIZE.width, Constants.SCREEN_SIZE.height);
+//        setBounds(0, 0, Constants.SCREEN_SIZE.width, Constants.SCREEN_SIZE.height);
         addMouseListeners();
         addMouseMotionListeners();
     }

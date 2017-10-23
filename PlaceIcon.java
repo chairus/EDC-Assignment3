@@ -51,15 +51,16 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     private Point convertMapPositionToGridPosition(Point pos) {
         Point gridPosition = new Point();
-        gridPosition.x = pos.x + Constants.ORIGIN.x;
-        if (gridPosition.x > Constants.SCREEN_SIZE.width) {
-            gridPosition.x = Constants.SCREEN_SIZE.width;
+        gridPosition.x = pos.x + MapEditor.frame.getWidth()/2;
+        if (gridPosition.x > MapEditor.frame.getWidth()) {
+            gridPosition.x = MapEditor.frame.getWidth();
         } else if (gridPosition.x < 0) {
             gridPosition.x = 0;
         }
-        gridPosition.y = Constants.ORIGIN.y - pos.y;
-        if (gridPosition.y > Constants.SCREEN_SIZE.height) {
-            gridPosition.y = Constants.SCREEN_SIZE.height;
+
+        gridPosition.y = MapEditor.frame.getHeight()/2 - pos.y;
+        if (gridPosition.y > MapEditor.frame.getHeight()) {
+            gridPosition.y = MapEditor.frame.getHeight();
         } else if (gridPosition.y < 0) {
             gridPosition.y = 0;
         }
