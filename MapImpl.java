@@ -480,9 +480,11 @@ public class MapImpl implements Map {
             return road;
         }
 
-
-        //Move the position of this place 
-        //by (dx,dy) from its current position
+        /**
+         * Move the position of this place by (dx,dy) from its current position
+         * @param dx    - The change in the x/horizontal direction
+         * @param dy    - The change in the y/vertical direction
+         */
         public void moveBy(int dx, int dy) {
             this.xPos += dx;
             this.yPos += dy;

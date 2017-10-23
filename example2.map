@@ -1,0 +1,17 @@
+# [keyword placeName x-coordinate y-coordinate]
+place PortAugusta 100 200
+place Woomera 43 123
+place Beltana 61 90
+place Marree -4 -5
+place Nurioopta 230 430
+place Gawler 200 380
+place Tanunda 205 420
+place Kapunda 212 500
+place Wallala -20 300
+end Kapunda
+start Woomera
+# [keyword placeOne roadName roadLength placeTwo]
+road PortAugusta B83 230 Beltana
+road Beltana B84 120 Marree
+road PortAugusta A87 90 Woomera
+road Nurioopta A20 143 Gawler
