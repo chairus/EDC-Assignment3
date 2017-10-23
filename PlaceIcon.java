@@ -35,11 +35,50 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      * Updates this place icon's coordinate to the coordinates of the place it is listening to
      */
     private void updatePlaceIconCoordinate() {
-        this.x = place.getX();
-        this.y = place.getY();
+//        this.x = place.getX();
+//        this.y = place.getY();
+        Point gridPosition = convertMapPositionToGridPosition(new Point(place.getX(), place.getY()));
+        this.x = gridPosition.x;
+        this.y = gridPosition.y;
         // To set the location of the place on the center of the bounds
-        this.setBounds(this.x - (Constants.placeWidth/2), this.y - (Constants.placeHeight/2), Constants.placeWidth, Constants.placeHeight);
+        this.setBounds(this.x - (Constants.PLACE_WIDTH/2), this.y - (Constants.PLACE_HEIGHT/2), Constants.PLACE_WIDTH, Constants.PLACE_HEIGHT);
 //        this.setBounds(this.x, this.y, Constants.placeWidth, Constants.placeHeight);
+    }
+
+    /**
+     * Converts the position of the place on the map to a position
+     * on the GUI
+     * @param pos   - The position to be converted
+     * @return      - The converted position
+     */
+    private Point convertMapPositionToGridPosition(Point pos) {
+        Point gridPosition = new Point();
+        gridPosition.x = pos.x + Constants.ORIGIN.x;
+        if (gridPosition.x > Constants.SCREEN_SIZE.width) {
+            gridPosition.x = Constants.SCREEN_SIZE.width;
+        } else if (gridPosition.x < 0) {
+            gridPosition.x = 0;
+        }
+        gridPosition.y = Constants.ORIGIN.y - pos.y;
+        if (gridPosition.y > Constants.SCREEN_SIZE.height) {
+            gridPosition.y = Constants.SCREEN_SIZE.height;
+        } else if (gridPosition.y < 0) {
+            gridPosition.y = 0;
+        }
+        return gridPosition;
+    }
+
+    /**
+     * Converts the position of the place on the GUI to its
+     * position on the map
+     * @param pos   - The position to be converted
+     * @return      - The converted position
+     */
+    private Point convertGridPositionToMapPosition(Point pos) {
+        Point mapPosition = new Point();
+        mapPosition.x = pos.x - Constants.ORIGIN.x;
+        mapPosition.y = Constants.ORIGIN.y - pos.y;
+        return mapPosition;
     }
 
     /**
@@ -75,19 +114,19 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 
     @Override
     protected void paintComponent(Graphics g) {
-        System.out.println("[PlaceIcon] paintComponent called");
+//        System.out.println("[PlaceIcon] paintComponent called");
         super.paintComponent(g);            // Customize what to paint after calling this
         Color fillColor = selectColor();
         if (fillColor == null) {            // The place is not in one of the state {SELECTED,START,END}
             fillColor = this.getBackground();
         }
         g.setColor(fillColor);
-        g.fillRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
+        g.fillRect(0, 0, Constants.PLACE_WIDTH, Constants.PLACE_HEIGHT);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
         Graphics2D g2 = (Graphics2D)g;
         float thickness = 3.0f;
         g2.setColor(Color.BLACK);
         g2.setStroke(new BasicStroke(thickness));
-        g2.drawRect(0, 0, Constants.placeWidth, Constants.placeHeight);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
+        g2.drawRect(0, 0, Constants.PLACE_WIDTH, Constants.PLACE_HEIGHT);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
     }
 
     /**
@@ -135,7 +174,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
             isSelected = !isSelected;
             repaint();
         }
-
 //        System.out.printf("isSelected after: %s%n", isSelected);
     }
 
@@ -148,9 +186,12 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     public void mousePressed(MouseEvent e) {
         System.out.printf("[ PlaceIcon ] Mouse pressed%n");
         Point screenLocation = e.getLocationOnScreen();
-//        System.out.printf("[ PlaceIcon ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
-        xDiff = screenLocation.x - this.place.getX();
-        yDiff = screenLocation.y - this.place.getY();
+        Point gridPosition = convertMapPositionToGridPosition(new Point(this.place.getX(), this.place.getY()));
+//        xDiff = screenLocation.x - this.place.getX();
+//        yDiff = screenLocation.y - this.place.getY();
+        xDiff = screenLocation.x - gridPosition.x;
+        yDiff = screenLocation.y - gridPosition.y;
+        System.err.printf("(xDiff, yDiff): (%d, %d)%n", xDiff, yDiff);
     }
 
     /**
@@ -203,16 +244,18 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void mouseDragged(MouseEvent e) {
         System.out.printf("[ PlaceIcon ] Mouse dragged%n");
-//        System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getPoint().getX(), e.getPoint().getY());
         Point screenLocation = e.getLocationOnScreen();
-        Point originLocation = new Point(this.place.getX(), this.place.getY());
+//        Point originLocation = new Point(this.place.getX(), this.place.getY());
+        Point originLocation = convertMapPositionToGridPosition(new Point(this.place.getX(), this.place.getY()));
 //        System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
 //        int dx = screenLocation.x - originLocation.x - this.xDiff - (this.mousePressedBoundsLocation.x - Constants.placeWidth/2);       // Change in x direction
 //        int dy = screenLocation.y - originLocation.y - this.yDiff - (this.mousePressedBoundsLocation.y - Constants.placeHeight/2);  // Change in y direction
         int dx = screenLocation.x - originLocation.x - this.xDiff;       // Change in x direction
         int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
-//        System.out.printf("New place location(x,y): (%d,%d)%n", this.place.getX() + dx, this.place.getY() + dy);
-        this.place.moveBy(dx, dy);
+        System.err.printf("(dx, dy): (%d, %d)%n", dx, dy);
+        System.err.printf("Old place location(x,y): (%d,%d)%n", this.place.getX(), this.place.getY());
+        System.err.printf("New place location(x,y) with plus dy: (%d,%d)%n", this.place.getX() + dx, this.place.getY() + dy);
+        this.place.moveBy(dx, -dy);
     }
 
     /**
@@ -223,9 +266,9 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseMoved(MouseEvent e) {
-        System.out.printf("[ PlaceIcon ] Mouse Moved%n");
-        System.out.printf("[ PlaceIcon ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
-        Point screenLocation = e.getLocationOnScreen();
-        System.out.printf("[ PlaceIcon ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+//        System.out.printf("[ PlaceIcon ] Mouse Moved%n");
+//        System.out.printf("[ PlaceIcon ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+//        Point screenLocation = e.getLocationOnScreen();
+//        System.out.printf("[ PlaceIcon ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
     }
 }

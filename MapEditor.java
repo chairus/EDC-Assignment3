@@ -48,7 +48,7 @@ public class MapEditor implements ActionListener {
         JMenuBar menuBar;
         menuBar = createMenuBar();
 //        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Set the size of the frame to full screen
-        frame.setPreferredSize(Constants.screenSize);   // Set the size of the frame to full screen
+        frame.setPreferredSize(Constants.SCREEN_SIZE);   // Set the size of the frame to full screen
         frame.setJMenuBar(menuBar);
         frame.add(mapPanel);
         frame.pack();

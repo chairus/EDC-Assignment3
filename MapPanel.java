@@ -31,10 +31,9 @@ public class MapPanel extends JPanel implements MapListener {
         this.endPoint = new Point();
         this.rectangleStroke = Rectangle.DOWN_RIGHT;
         setLayout(null);
-        setBounds(0, 0, Constants.screenSize.width, Constants.screenSize.height);
+        setBounds(0, 0, Constants.SCREEN_SIZE.width, Constants.SCREEN_SIZE.height);
         addMouseListeners();
         addMouseMotionListeners();
-        System.out.printf("MapPanel size(width,height): (%d,%d)%n", this.getSize().width, this.getSize().height);
     }
 
     /**
@@ -230,6 +229,7 @@ public class MapPanel extends JPanel implements MapListener {
 
     /**
      * Updates one of the vertex of the drawn rectangle
+     * @param e     - The mouse event
      */
     private void updateRectangleStartEndPoint(MouseEvent e) {
         switch (rectangleStroke) {
