@@ -100,7 +100,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 
     @Override
     protected void paintComponent(Graphics g) {
-//        System.out.println("[ PlaceIcon ] paintComponent called");
+        System.out.println("[ PlaceIcon ] paintComponent called");
         super.paintComponent(g);            // Customize what to paint after calling this
         Color fillColor = selectColor();
         if (fillColor == null) {            // The place is not in one of the state {SELECTED,START,END}

@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -34,6 +32,30 @@ public class MapPanel extends JPanel implements MapListener {
 //        setBounds(0, 0, Constants.SCREEN_SIZE.width, Constants.SCREEN_SIZE.height);
         addMouseListeners();
         addMouseMotionListeners();
+        addResizeListener();
+    }
+
+    /**
+     * Adds a component listener that listens is the size of the window has changed.
+     */
+    private void addResizeListener() {
+        this.addComponentListener(new ComponentAdapter() {
+            /**
+             * Invoked when the component's size changes. It invokes the placeChanged
+             * method of each place icon to force them to adjust their coordinates
+             * according to the new display size.
+             *
+             * @param e
+             */
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                super.componentResized(e);
+                for (PlaceIcon placeIcon: placeIcons) {
+                    placeIcon.placeChanged();
+                }
+            }
+        });
     }
 
     /**
@@ -332,8 +354,6 @@ public class MapPanel extends JPanel implements MapListener {
     @Override
     protected void paintComponent(Graphics g) {
         System.out.printf("[ MapPanel ] paintComponent called%n");
-//        System.out.printf("[ MapPanel ] startPoint(x,y): (%d,%d)%n", startPoint.x, startPoint.y);
-//        System.out.printf("[ MapPanel ] endPoint(x,y): (%d,%d)%n", endPoint.x, endPoint.y);
         super.paintComponent(g);        // Customize what to paint after calling this
         g.setColor(Color.BLACK);
         float thickness = 2.0f;
