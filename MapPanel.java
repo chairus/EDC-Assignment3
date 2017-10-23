@@ -12,6 +12,8 @@ import java.util.List;
 public class MapPanel extends JPanel implements MapListener {
     private List<Place> places;             // The list of places currently being displayed by this MapPanel
     private List<PlaceIcon> placeIcons;     // The list of listeners to each place in the list of places
+    private List<Road> roads;               // The list of roads currently being displayed by this MapPanel
+    private List<RoadIcon> roadIcons;       // The list of listeners to each road in the list of roads
     private Map map;                        // A map object that stores the current map
     private Point startPoint, endPoint;     // Start and end point of the selection box
     private RectangleStroke rectangleStroke;      // Represents how the rectangle was drawn
@@ -144,6 +146,13 @@ public class MapPanel extends JPanel implements MapListener {
                 addPlaceIcon(place);
             }
         }
+    }
+
+    /**
+     * Updates the list of roads maintained by this map panel
+     */
+    private void updateRoads() {
+        
     }
 
     /**
@@ -408,6 +417,7 @@ public class MapPanel extends JPanel implements MapListener {
     @Override
     public void roadsChanged() {
         System.out.println("roadsChanged");
+        updateRoads();
         repaint();
     }
 
