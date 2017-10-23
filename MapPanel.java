@@ -285,7 +285,7 @@ public class MapPanel extends JPanel implements MapListener {
 
     /**
      * Sets the start and end point of the rectangle and also update the state on
-     * how the rectangle is drawn
+     * how the rectangle is drawn.
      */
     private void setStartEndPoint() {
         if (mouseStartPosition.x > mouseEndPosition.x && mouseStartPosition.y > mouseEndPosition.y) {       // When mouse is dragged up-and-left/left-and-up
