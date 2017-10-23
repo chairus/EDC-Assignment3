@@ -14,7 +14,7 @@ public class MapPanel extends JPanel implements MapListener {
     private List<PlaceIcon> placeIcons;     // The list of listeners to each place in the list of places
     private Map map;                        // A map object that stores the current map
     private Point startPoint, endPoint;     // Start and end point of the selection box
-    private Rectangle rectangleStroke;      // Represents how the rectangle was drawn
+    private RectangleStroke rectangleStroke;      // Represents how the rectangle was drawn
     private Point mouseStartPosition, mouseEndPosition;    //
 
 
@@ -27,7 +27,7 @@ public class MapPanel extends JPanel implements MapListener {
         this.placeIcons = new ArrayList<>();
         this.startPoint = new Point();
         this.endPoint = new Point();
-        this.rectangleStroke = Rectangle.DOWN_RIGHT;
+        this.rectangleStroke = RectangleStroke.DOWN_RIGHT;
         setLayout(null);
 //        setBounds(0, 0, Constants.SCREEN_SIZE.width, Constants.SCREEN_SIZE.height);
         addMouseListeners();
@@ -202,8 +202,12 @@ public class MapPanel extends JPanel implements MapListener {
             public void mouseReleased(MouseEvent e) {
                 System.out.printf("[ MapPanel ] Mouse Released%n");
                 System.out.printf("[ MapPanel ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
+                int width = endPoint.x - startPoint.x;
+                int height = endPoint.y - startPoint.y;
+                List<Component> selectedPlaceIcons = getIntersectedComponents(new Rectangle(startPoint.x, startPoint.y, width, height));
+                setIsSelected(selectedPlaceIcons);
                 endPoint = new Point(-1,-1);        // To remove the drawn rectangle
-                rectangleStroke = Rectangle.DOWN_RIGHT;    // Reset the stroke
+                rectangleStroke = RectangleStroke.DOWN_RIGHT;    // Reset the stroke
                 repaint();
             }
 
@@ -306,39 +310,69 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
-     * Sets the start and end point of the rectangle and also update the state on
-     * how the rectangle is drawn
+     * Sets correctly the start and end point of the rectangle depending on how it was
+     * drawn and also update the state on how the rectangle is drawn
      */
     private void setStartEndPoint() {
         if (mouseStartPosition.x > mouseEndPosition.x && mouseStartPosition.y > mouseEndPosition.y) {       // When mouse is dragged up-and-left/left-and-up
-            if (rectangleStroke != Rectangle.UP_LEFT) {
+            if (rectangleStroke != RectangleStroke.UP_LEFT) {
                 startPoint = new Point(mouseEndPosition);
                 endPoint = new Point(mouseStartPosition);
-                rectangleStroke = Rectangle.UP_LEFT;
+                rectangleStroke = RectangleStroke.UP_LEFT;
             }
         } else if (mouseStartPosition.x > mouseEndPosition.x && mouseStartPosition.y < mouseEndPosition.y) {    // When mouse is dragged down-and-left/left-and-down
-            if (rectangleStroke != Rectangle.DOWN_LEFT) {
+            if (rectangleStroke != RectangleStroke.DOWN_LEFT) {
                 // Switch their x-coordinate
                 Point tempMouseEndPosition = new Point(mouseEndPosition);
                 Point tempMouseStartPosition = new Point(mouseStartPosition);
                 startPoint.x = tempMouseEndPosition.x;
                 endPoint.x = tempMouseStartPosition.x;
-                rectangleStroke = Rectangle.DOWN_LEFT;
+                rectangleStroke = RectangleStroke.DOWN_LEFT;
             }
         } else if (mouseStartPosition.x < mouseEndPosition.x && mouseStartPosition.y > mouseEndPosition.y) {    // When mouse is dragged up-and-right/right-and-up
-            if (rectangleStroke != Rectangle.UP_RIGHT) {
+            if (rectangleStroke != RectangleStroke.UP_RIGHT) {
                 // Switch their y-coordinate
                 Point tempMouseEndPosition = new Point(mouseEndPosition);
                 Point tempMouseStartPosition = new Point(mouseStartPosition);
                 startPoint.y = tempMouseEndPosition.y;
                 endPoint.y = tempMouseStartPosition.y;
-                rectangleStroke = Rectangle.UP_RIGHT;
+                rectangleStroke = RectangleStroke.UP_RIGHT;
             }
         } else if (mouseStartPosition.x < mouseEndPosition.x && mouseStartPosition.y < mouseEndPosition.y) {
-            if (rectangleStroke != Rectangle.DOWN_RIGHT) {
+            if (rectangleStroke != RectangleStroke.DOWN_RIGHT) {
                 startPoint = new Point(mouseStartPosition);
                 endPoint = new Point(mouseEndPosition);
-                rectangleStroke = Rectangle.DOWN_RIGHT;
+                rectangleStroke = RectangleStroke.DOWN_RIGHT;
+            }
+        }
+    }
+
+    /**
+     * Returns the place icon components inside a rectangle
+     * @param selectionBox  - A rectangle/square on where to check if there
+     *                        are any place icon inside it
+     * @return              - A list of place icon inside the dawn rectangle
+     */
+    private List<Component> getIntersectedComponents(Rectangle selectionBox) {
+        List<Component> selectedComponents = new ArrayList<>();
+        Component[] placeIconComponents = this.getComponents();
+        for (Component comp: placeIconComponents) {
+            if (selectionBox.contains(comp.getBounds())) {
+                selectedComponents.add(comp);
+            }
+        }
+        return selectedComponents;
+    }
+
+    /**
+     * Sets the isSelected property of each of the components in the list
+     * @param components    - A list of components that has an isSelected boolean property
+     */
+    private void setIsSelected(List<Component> components) {
+        for (Component comp: components) {
+            PlaceIcon placeIcon = (PlaceIcon)comp;
+            if (!placeIcon.getPlace().isStartPlace() && !placeIcon.getPlace().isEndPlace()) {
+                placeIcon.setIsSelected(true);
             }
         }
     }
@@ -388,7 +422,7 @@ public class MapPanel extends JPanel implements MapListener {
      * drawn started from up-left/left-up, down-left/left-down,
      * up-right/right-up, down-right/right-down.
      */
-    private enum Rectangle {
+    private enum RectangleStroke {
         UP_LEFT,
         UP_RIGHT,
         DOWN_LEFT,

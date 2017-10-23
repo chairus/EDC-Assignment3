@@ -81,6 +81,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     public void setIsSelected(boolean val) {
         this.isSelected = val;
+        repaint();
     }
 
     /**
@@ -236,8 +237,9 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 //        int dx = screenLocation.x - originLocation.x - this.xDiff - (this.mousePressedBoundsLocation.x - Constants.placeWidth/2);       // Change in x direction
 //        int dy = screenLocation.y - originLocation.y - this.yDiff - (this.mousePressedBoundsLocation.y - Constants.placeHeight/2);  // Change in y direction
         int dx = screenLocation.x - originLocation.x - this.xDiff;       // Change in x direction
-        int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
-        this.place.moveBy(dx, -dy);
+//        int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
+        int dy = originLocation.y + this.yDiff - screenLocation.y;       // Change in y direction
+        this.place.moveBy(dx, dy);
     }
 
     /**
