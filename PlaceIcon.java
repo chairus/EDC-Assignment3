@@ -35,8 +35,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      * Updates this place icon's coordinate to the coordinates of the place it is listening to
      */
     private void updatePlaceIconCoordinate() {
-//        this.x = place.getX();
-//        this.y = place.getY();
         Point gridPosition = convertMapPositionToGridPosition(new Point(place.getX(), place.getY()));
         this.x = gridPosition.x;
         this.y = gridPosition.y;
@@ -66,19 +64,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
             gridPosition.y = 0;
         }
         return gridPosition;
-    }
-
-    /**
-     * Converts the position of the place on the GUI to its
-     * position on the map
-     * @param pos   - The position to be converted
-     * @return      - The converted position
-     */
-    private Point convertGridPositionToMapPosition(Point pos) {
-        Point mapPosition = new Point();
-        mapPosition.x = pos.x - Constants.ORIGIN.x;
-        mapPosition.y = Constants.ORIGIN.y - pos.y;
-        return mapPosition;
     }
 
     /**
