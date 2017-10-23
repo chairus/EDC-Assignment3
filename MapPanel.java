@@ -17,6 +17,7 @@ public class MapPanel extends JPanel implements MapListener {
     private Map map;                        // A map object that stores the current map
     private Point startPoint, endPoint;     // Start and end point of the selection box
     private Rectangle rectangleStroke;      // Represents how the rectangle was drawn
+    private Point mouseStartPosition, mouseEndPosition;    //
 
 
     /**
@@ -167,9 +168,8 @@ public class MapPanel extends JPanel implements MapListener {
             public void mousePressed(MouseEvent e) {
                 System.out.printf("[ MapPanel ] Mouse Pressed%n");
                 startPoint = e.getPoint();
+                mouseStartPosition = e.getPoint();
                 System.out.printf("[ MapPanel ] Mouse position at(x,y): (%f,%f)%n", startPoint.getX(), startPoint.getY());
-                Point screenLocation = e.getLocationOnScreen();
-                System.out.printf("[ MapPanel ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
             }
 
             /**
@@ -181,10 +181,8 @@ public class MapPanel extends JPanel implements MapListener {
             public void mouseReleased(MouseEvent e) {
                 System.out.printf("[ MapPanel ] Mouse Released%n");
                 System.out.printf("[ MapPanel ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
-                Point screenLocation = e.getLocationOnScreen();
-                System.out.printf("[ MapPanel ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
-                endPoint = new Point(-1,-1);      // To remove the drawn rectangle
-                rectangleStroke = Rectangle.DOWN_RIGHT; //  Reset the stroke so that a new rectangle can be drawn
+                endPoint = new Point(-1,-1);        // To remove the drawn rectangle
+                rectangleStroke = Rectangle.DOWN_RIGHT;    // Reset the stroke
                 repaint();
             }
 
@@ -217,27 +215,21 @@ public class MapPanel extends JPanel implements MapListener {
         this.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
+                mouseEndPosition = e.getPoint();
                 updateRectangleStartEndPoint(e);
-                System.out.printf("[ MapPanel ] Mouse Dragged%n");
-                System.out.printf("[ MapPanel ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
-                Point screenLocation = e.getLocationOnScreen();
-                System.out.printf("[ MapPanel ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
                 setStartEndPoint();
                 repaint();
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-//                System.out.printf("Mouse Moved%n");
-//                System.out.printf("Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
-//                Point screenLocation = e.getLocationOnScreen();
-//                System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+                // DO NOTHING FOR NOW
             }
         });
     }
 
     /**
-     * Updates one of the end point of the drawn rectangle
+     * Updates one of the vertex of the drawn rectangle
      */
     private void updateRectangleStartEndPoint(MouseEvent e) {
         switch (rectangleStroke) {
@@ -292,31 +284,39 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
-     * Sets the start and end point of the rectangle
+     * Sets the start and end point of the rectangle and also update the state on
+     * how the rectangle is drawn
      */
     private void setStartEndPoint() {
-        if (endPoint.x >= 0 && endPoint.y >= 0) {
-            if (startPoint.x > endPoint.x && startPoint.y > endPoint.y) {       // When mouse is dragged up-and-left/left-and-up
-                if (rectangleStroke != Rectangle.UP_LEFT) {
-                    Point tempPoint = startPoint;
-                    startPoint = endPoint;
-                    endPoint = tempPoint;
-                    rectangleStroke = Rectangle.UP_LEFT;
-                }
-            } else if (startPoint.x > endPoint.x && startPoint.y < endPoint.y) {    // When mouse is dragged down-and-left/left-and-down
-                if (rectangleStroke != Rectangle.DOWN_LEFT) {
-                    // Switch their x-coordinate
-                    Point tempPoint = new Point(startPoint);
-                    endPoint.x = tempPoint.x;
-                    rectangleStroke = Rectangle.DOWN_LEFT;
-                }
-            } else if (startPoint.x < endPoint.x && startPoint.y > endPoint.y) {    // When mouse is dragged up-and-right/right-and-up
-                if (rectangleStroke != Rectangle.UP_RIGHT) {
-                    // Switch their y-coordinate
-                    Point tempPoint = new Point(startPoint);
-                    endPoint.y = tempPoint.y;
-                    rectangleStroke = Rectangle.UP_RIGHT;
-                }
+        if (mouseStartPosition.x > mouseEndPosition.x && mouseStartPosition.y > mouseEndPosition.y) {       // When mouse is dragged up-and-left/left-and-up
+            if (rectangleStroke != Rectangle.UP_LEFT) {
+                startPoint = new Point(mouseEndPosition);
+                endPoint = new Point(mouseStartPosition);
+                rectangleStroke = Rectangle.UP_LEFT;
+            }
+        } else if (mouseStartPosition.x > mouseEndPosition.x && mouseStartPosition.y < mouseEndPosition.y) {    // When mouse is dragged down-and-left/left-and-down
+            if (rectangleStroke != Rectangle.DOWN_LEFT) {
+                // Switch their x-coordinate
+                Point tempMouseEndPosition = new Point(mouseEndPosition);
+                Point tempMouseStartPosition = new Point(mouseStartPosition);
+                startPoint.x = tempMouseEndPosition.x;
+                endPoint.x = tempMouseStartPosition.x;
+                rectangleStroke = Rectangle.DOWN_LEFT;
+            }
+        } else if (mouseStartPosition.x < mouseEndPosition.x && mouseStartPosition.y > mouseEndPosition.y) {    // When mouse is dragged up-and-right/right-and-up
+            if (rectangleStroke != Rectangle.UP_RIGHT) {
+                // Switch their y-coordinate
+                Point tempMouseEndPosition = new Point(mouseEndPosition);
+                Point tempMouseStartPosition = new Point(mouseStartPosition);
+                startPoint.y = tempMouseEndPosition.y;
+                endPoint.y = tempMouseStartPosition.y;
+                rectangleStroke = Rectangle.UP_RIGHT;
+            }
+        } else if (mouseStartPosition.x < mouseEndPosition.x && mouseStartPosition.y < mouseEndPosition.y) {
+            if (rectangleStroke != Rectangle.DOWN_RIGHT) {
+                startPoint = new Point(mouseStartPosition);
+                endPoint = new Point(mouseEndPosition);
+                rectangleStroke = Rectangle.DOWN_RIGHT;
             }
         }
     }
