@@ -92,14 +92,14 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 
     @Override
     public void placeChanged() {
-        System.out.printf("[PlaceIcon] placeChanged called%n");
+        System.out.printf("[ PlaceIcon ] placeChanged called%n");
         this.updatePlaceIconCoordinate();
         repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-//        System.out.println("[PlaceIcon] paintComponent called");
+//        System.out.println("[ PlaceIcon ] paintComponent called");
         super.paintComponent(g);            // Customize what to paint after calling this
         Color fillColor = selectColor();
         if (fillColor == null) {            // The place is not in one of the state {SELECTED,START,END}
@@ -176,7 +176,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 //        yDiff = screenLocation.y - this.place.getY();
         xDiff = screenLocation.x - gridPosition.x;
         yDiff = screenLocation.y - gridPosition.y;
-        System.err.printf("(xDiff, yDiff): (%d, %d)%n", xDiff, yDiff);
     }
 
     /**
@@ -237,9 +236,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 //        int dy = screenLocation.y - originLocation.y - this.yDiff - (this.mousePressedBoundsLocation.y - Constants.placeHeight/2);  // Change in y direction
         int dx = screenLocation.x - originLocation.x - this.xDiff;       // Change in x direction
         int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
-        System.err.printf("(dx, dy): (%d, %d)%n", dx, dy);
-        System.err.printf("Old place location(x,y): (%d,%d)%n", this.place.getX(), this.place.getY());
-        System.err.printf("New place location(x,y) with plus dy: (%d,%d)%n", this.place.getX() + dx, this.place.getY() + dy);
         this.place.moveBy(dx, -dy);
     }
 
