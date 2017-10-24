@@ -157,6 +157,15 @@ public class MapEditor implements ActionListener {
         // Create the menu item "New place"
         menuItem = new JMenuItem("[New place...]");
         menuItem.setSelected(true);
+//        menuItem.setMnemonic(KeyEvent.VK_P);
+//        menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + P' to select this menu item
+//                KeyEvent.VK_P,
+//                ActionEvent.CTRL_MASK));
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
+        // Create the menu item "Add place"
+        menuItem = new JMenuItem("[Add place...]");
+        menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_P);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + P' to select this menu item
                 KeyEvent.VK_P,
@@ -165,6 +174,15 @@ public class MapEditor implements ActionListener {
         menu.add(menuItem);
         // Create the menu item "New road"
         menuItem = new JMenuItem("[New road...]");
+        menuItem.setSelected(true);
+//        menuItem.setMnemonic(KeyEvent.VK_R);
+//        menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + R' to select this menu item
+//                KeyEvent.VK_R,
+//                ActionEvent.CTRL_MASK));
+//        menuItem.addActionListener(this);
+        menu.add(menuItem);
+        // Create the menu item "Add road"
+        menuItem = new JMenuItem("[Add road...]");
         menuItem.setSelected(true);
         menuItem.setMnemonic(KeyEvent.VK_R);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + R' to select this menu item
@@ -231,12 +249,17 @@ public class MapEditor implements ActionListener {
                 setStartPlaceAction();
             } else if (actionCommand.contains("set end")) {
                 setEndPlaceAction();
+            } else if (actionCommand.contains("add place")) {
+                addPlaceAction();
             }
         } catch (MapFormatException e) {
             System.err.println("MapFormatException: " + e.getMessage());
             new ErrorDialog(frame, "Error", e.getMessage());
         } catch (IOException e) {
             System.err.println("IOException: " + e.getMessage());
+            new ErrorDialog(frame, "Error", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.err.println("IllegalArgumentException: " + e.getMessage());
             new ErrorDialog(frame, "Error", e.getMessage());
         }
     }
@@ -463,6 +486,91 @@ public class MapEditor implements ActionListener {
         FileWriter fWriter = new FileWriter(filename);
         outFile = new BufferedWriter(fWriter);
         return outFile;
+    }
+
+    /**
+     * Adds a place, provided by the user, into the map object
+     */
+    private void addPlaceAction() {
+        PlaceInputDialog addPlace = new PlaceInputDialog(frame, "Add place", "Please type the name of the place in the input box");
+        String placeName = addPlace.getPlaceName();
+        System.out.printf("[ addPlaceAction ] Place name is \"%s\"%n", placeName);
+        map.newPlace(placeName, 0, 0);
+    }
+
+    /**
+     * An input dialog class that creates and shows a dialog box with a message
+     * and one input boxe where the user can type in.
+     */
+    private class PlaceInputDialog extends JDialog implements ActionListener {
+        private JTextField placeNameTextField;
+        private String placeName;
+        public PlaceInputDialog (JFrame owner, String title, String message) {
+            super(owner, title, true);
+            placeName = "";
+            createAndShow(owner, message);
+        }
+
+        private void createAndShow(JFrame owner, String message) {
+            JPanel messagePanel = new JPanel();
+            setPreferredSize(new Dimension(450, 275));
+            JLabel messageLabel = new JLabel();
+            // To provide a wrap around effect of the label's text and also to center align the text.
+            String labelText = String.format(String.format("<html><div style=\"width:%dpx;text-align:center\">%s</div></html>",
+                    250,
+                    message));
+            // Labels
+            messageLabel.setText(labelText);
+            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
+            messagePanel.add(messageLabel);
+            getContentPane().add(messagePanel, BorderLayout.NORTH);
+            // Inputs
+            JPanel inputPanel = new JPanel();
+            placeNameTextField = new JTextField();
+            placeNameTextField.setPreferredSize(new Dimension(180, 40));
+            inputPanel.add(placeNameTextField);
+            getContentPane().add(inputPanel, BorderLayout.CENTER);
+            // Buttons
+            JPanel buttonPanel = new JPanel();
+            JButton okButton = new JButton("[OK]");
+            okButton.setPreferredSize(new Dimension(150, 40));
+            buttonPanel.add(okButton);
+            okButton.addActionListener(this);
+            JButton cancelButton = new JButton("[Cancel]");
+            cancelButton.setPreferredSize(new Dimension(150, 40));
+            buttonPanel.add(cancelButton);
+            cancelButton.addActionListener(this);
+            getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            pack();
+            if (owner != null) {
+                setLocationRelativeTo(owner);
+            }
+            setVisible(true);
+        }
+
+        /**
+         * Returns the name of the place that was typed in the
+         * text box
+         * @return
+         */
+        public String getPlaceName() {
+            return this.placeName;
+        }
+
+        /**
+         * Invoked when an action occurs.
+         *
+         * @param e
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equalsIgnoreCase("[ok]")) {
+                this.placeName = placeNameTextField.getText();
+            }
+            setVisible(false);
+            dispose();
+        }
     }
 
     /**
