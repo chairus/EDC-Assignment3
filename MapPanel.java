@@ -422,10 +422,16 @@ public class MapPanel extends JPanel implements MapListener {
              */
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.printf("[ MapPanel ] Mouse Pressed%n");
-                startPoint = e.getPoint();
-                mouseStartPosition = e.getPoint();
-                System.out.printf("[ MapPanel ] Mouse position at(x,y): (%f,%f)%n", startPoint.getX(), startPoint.getY());
+                switch (newRoadState) {
+                    case DONE:
+                        System.out.printf("[ MapPanel ] Mouse Pressed%n");
+                        startPoint = e.getPoint();
+                        mouseStartPosition = e.getPoint();
+                        System.out.printf("[ MapPanel ] Mouse position at(x,y): (%f,%f)%n", startPoint.getX(), startPoint.getY());
+                        break;
+                    default:
+                        break;
+                }
             }
 
             /**
@@ -437,13 +443,19 @@ public class MapPanel extends JPanel implements MapListener {
             public void mouseReleased(MouseEvent e) {
                 System.out.printf("[ MapPanel ] Mouse Released%n");
                 System.out.printf("[ MapPanel ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
-                int width = endPoint.x - startPoint.x;
-                int height = endPoint.y - startPoint.y;
-                List<Component> selectedPlaceIcons = getIntersectedComponents(new Rectangle(startPoint.x, startPoint.y, width, height));
-                setIsSelected(selectedPlaceIcons);
-                endPoint = new Point(-1,-1);                // To remove the drawn rectangle
-                rectangleStroke = RectangleStroke.DOWN_RIGHT;     // Reset the stroke
-                repaint();
+                switch (newRoadState) {
+                    case DONE:
+                        int width = endPoint.x - startPoint.x;
+                        int height = endPoint.y - startPoint.y;
+                        List<Component> selectedPlaceIcons = getIntersectedComponents(new Rectangle(startPoint.x, startPoint.y, width, height));
+                        setIsSelected(selectedPlaceIcons);
+                        endPoint = new Point(-1,-1);                // To remove the drawn rectangle
+                        rectangleStroke = RectangleStroke.DOWN_RIGHT;     // Reset the stroke
+                        repaint();
+                        break;
+                    default:
+                        break;
+                }
             }
 
             /**
@@ -475,10 +487,16 @@ public class MapPanel extends JPanel implements MapListener {
         this.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                mouseEndPosition = e.getPoint();
-                updateRectangleStartEndPoint(e);
-                setStartEndPoint();
-                repaint();
+                switch (newRoadState) {
+                    case DONE:
+                        mouseEndPosition = e.getPoint();
+                        updateRectangleStartEndPoint(e);
+                        setStartEndPoint();
+                        repaint();
+                        break;
+                    default:
+                        break;
+                }
             }
 
             @Override
