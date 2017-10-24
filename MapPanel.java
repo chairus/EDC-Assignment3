@@ -230,6 +230,7 @@ public class MapPanel extends JPanel implements MapListener {
         switch (currentState) {
             case FIRST_PLACE:
                 if (startPlace != null) {
+                    System.err.println("[ MapPanel ] updateState: USER HAS CLICKED A PLACE");
                     newRoadState = NewRoadState.SECOND_PLACE;
                     performAction();
                 }
@@ -359,7 +360,7 @@ public class MapPanel extends JPanel implements MapListener {
                         if (hasDeselected) repaint();
                         break;
                     case FIRST_PLACE:
-                        System.out.println("[ MapPanel ] mouseClicked: FIRST_PLACE");
+                        System.err.println("[ MapPanel ] mouseClicked: FIRST_PLACE");
                         selectedPlaceIcon = getSelectedPlaceIcon();
                         if (selectedPlaceIcon.size() == 1) {
                             startPlaceIcon = selectedPlaceIcon.get(0);
@@ -368,7 +369,7 @@ public class MapPanel extends JPanel implements MapListener {
                         updateState(NewRoadState.FIRST_PLACE);
                         break;
                     case SECOND_PLACE:
-                        System.out.println("[ MapPanel ] mouseClicked: SECOND_PLACE");
+                        System.err.println("[ MapPanel ] mouseClicked: SECOND_PLACE");
                         selectedPlaceIcon = getSelectedPlaceIcon();
                         for (PlaceIcon placeIcon: selectedPlaceIcon) {  // Look for the selected end place
                             if (placeIcon.getPlace() != startPlace) {   // Found the selected end place of the road
@@ -380,7 +381,7 @@ public class MapPanel extends JPanel implements MapListener {
                         updateState(NewRoadState.SECOND_PLACE);
                         break;
                     default:
-                        System.out.println("DEFAULT");
+                        System.err.println("[ MapPanel ] mouseClicked: DEFAULT");
                         break;
                 }
 
@@ -616,7 +617,7 @@ public class MapPanel extends JPanel implements MapListener {
 
     @Override
     protected void paintComponent(Graphics g) {
-        System.out.printf("[ MapPanel ] paintComponent called%n");
+//        System.out.printf("[ MapPanel ] paintComponent called%n");
         super.paintComponent(g);        // Customize what to paint after calling this
         Graphics2D g2 = (Graphics2D)g;
         switch (newRoadState) {
@@ -631,7 +632,7 @@ public class MapPanel extends JPanel implements MapListener {
                 g.setColor(Color.BLACK);
                 g2.setStroke(new BasicStroke(Constants.ROAD_LINE_THICKNESS));
                 Point mousePosition = getMousePosition();
-                g2.drawLine(startPlaceIcon.getX(), startPlaceIcon.getY(), mousePosition.x, mousePosition.y);
+                g2.drawLine(startPlaceIcon.x, startPlaceIcon.y, mousePosition.x, mousePosition.y);
                 break;
             default:
                 break;
@@ -679,7 +680,6 @@ public class MapPanel extends JPanel implements MapListener {
         FIRST_PLACE,
         SECOND_PLACE,
         ADD_ROAD,
-        ERROR,
         DONE,
     }
 }

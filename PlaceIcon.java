@@ -10,7 +10,7 @@ import java.awt.event.MouseMotionListener;
  */
 
 public class PlaceIcon extends JComponent implements PlaceListener, MouseListener, MouseMotionListener {
-    private int x, y;                           // X and Y coordinates of the place
+    public int x, y;                           // X and Y coordinates of the place
     private Place place;                        // The place that this place listener is listening to
     private boolean isSelected;                 // A value that determines if this place icon is selected
     private int xDiff, yDiff;                   // Difference between the x and y coordinate of the exact position of the place icon and its location on the screen
@@ -80,7 +80,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 
     @Override
     public void placeChanged() {
-        System.out.printf("[ PlaceIcon ] placeChanged called%n");
+//        System.out.printf("[ PlaceIcon ] placeChanged called%n");
         this.updatePlaceIconCoordinate();
         if (this.place.isStartPlace()) {
             placeIconState = PlaceIconState.START;
@@ -97,7 +97,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 
     @Override
     protected void paintComponent(Graphics g) {
-        System.out.println("[ PlaceIcon ] paintComponent called");
+//        System.out.println("[ PlaceIcon ] paintComponent called");
         super.paintComponent(g);             // Customize what to paint after calling this
         Color fillColor = selectColor();
         g.setColor(fillColor);
@@ -146,9 +146,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
-//        System.out.printf("isSelected before: %s%n", isSelected);
-//        System.out.printf("isStartPlace: %s%n", this.place.isStartPlace());
-//        System.out.printf("isEndPlace: %s%n", this.place.isEndPlace());
         isSelected = !isSelected;
         if (this.isSelected) {
             placeIconState = PlaceIconState.SELECTED;
@@ -158,7 +155,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
             if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
         }
         repaint();
-//        System.out.printf("isSelected after: %s%n", isSelected);
     }
 
     /**
@@ -184,7 +180,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.printf("[ PlaceIcon ] Mouse released%n");
+//        System.out.printf("[ PlaceIcon ] Mouse released%n");
     }
 
     /**
@@ -194,7 +190,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.printf("[ PlaceIcon ] Mouse entered%n");
+//        System.out.printf("[ PlaceIcon ] Mouse entered%n");
     }
 
     /**
@@ -204,7 +200,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseExited(MouseEvent e) {
-        System.out.printf("[ PlaceIcon ] Mouse exited%n");
+//        System.out.printf("[ PlaceIcon ] Mouse exited%n");
     }
 
     //////////////////////////////
