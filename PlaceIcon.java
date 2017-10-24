@@ -168,41 +168,14 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         repaint();
         switch (newRoadState) {
             case FIRST_PLACE:
-//                isSelected = !isSelected;
-//                if (this.isSelected) {
-//                    placeIconState = PlaceIconState.SELECTED;
-//                } else {
-//                    placeIconState = PlaceIconState.DESELECTED;
-//                    if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
-//                    if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
-//                }
-//                repaint();
                 this.getParent().dispatchEvent(e);
                 System.err.println("[ PlaceIcon ] mouseClicked: EVENT DISPATCHED FIRST_PLACE");
                 break;
             case SECOND_PLACE:
-//                isSelected = !isSelected;
-//                if (this.isSelected) {
-//                    placeIconState = PlaceIconState.SELECTED;
-//                } else {
-//                    placeIconState = PlaceIconState.DESELECTED;
-//                    if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
-//                    if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
-//                }
-//                repaint();
                 this.getParent().dispatchEvent(e);
                 System.err.println("[ PlaceIcon ] mouseClicked: EVENT DISPATCHED SECOND_PLACE");
                 break;
             default:
-//                isSelected = !isSelected;
-//                if (this.isSelected) {
-//                    placeIconState = PlaceIconState.SELECTED;
-//                } else {
-//                    placeIconState = PlaceIconState.DESELECTED;
-//                    if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
-//                    if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
-//                }
-//                repaint();
                 break;
         }
 
