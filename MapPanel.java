@@ -183,6 +183,11 @@ public class MapPanel extends JPanel implements MapListener {
         newRoadName = roadName;
         newRoadLength = length;
         newRoadState = NewRoadState.FIRST_PLACE;
+        // Deselect all selected place icons so as not to cause
+        // any problem in choosing the first and second place of the road
+        for (PlaceIcon placeIcon: getSelectedPlaceIcon()) {
+            placeIcon.setIsSelected(false);
+        }
         updatePlaceIconsNewRoadState(newRoadState);
         performAction();
     }
