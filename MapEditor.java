@@ -263,9 +263,6 @@ public class MapEditor implements ActionListener {
         } catch (IllegalArgumentException e) {
             System.err.println("IllegalArgumentException: " + e.getMessage());
             new ErrorDialog(frame, "Error", e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
-            new ErrorDialog(frame, "Error", e.getMessage());
         }
     }
 
@@ -506,14 +503,21 @@ public class MapEditor implements ActionListener {
         }
     }
 
+    /**
+     * Adds a road, provided by the user, into the map object.
+     */
     private void addRoadAction() {
         RoadInputDialog addRoad = new RoadInputDialog(frame, "Add road");
         String roadName = addRoad.getRoadName();
-        int roadLength = addRoad.getLength();
-        System.out.printf("[ addRoadAction ] Road name is \"%s\"%n", roadName);
-        System.out.printf("[ addRoadAction ] Road length is %d%n", roadLength);
         if (addRoad.isOkPressed()) {
-            System.out.printf("[OK] button pressed%n");
+            try {
+                int roadLength = Integer.parseInt(addRoad.getLength());
+                System.out.printf("[ addRoadAction ] Road name is \"%s\"%n", roadName);
+                System.out.printf("[ addRoadAction ] Road length is %d%n", roadLength);
+                mapPanel.newRoad(roadName, roadLength);
+            } catch (NumberFormatException e) {
+                throw new NumberFormatException("Invalid length: " + addRoad.getLength());
+            }
         }
     }
 
@@ -524,7 +528,7 @@ public class MapEditor implements ActionListener {
     private class RoadInputDialog extends JDialog implements ActionListener {
         private boolean okPressed;
         private String roadName;
-        private int length;
+        private String length;
         private JTextField roadNameTextField;
         private JTextField roadLengthTextField;
         public RoadInputDialog (JFrame owner, String title) {
@@ -532,7 +536,7 @@ public class MapEditor implements ActionListener {
             this.okPressed = false;
             setLayout(new GridLayout(3,2));
             roadName = "";
-            length = 0;
+            length = "";
             this.createAndShow(owner);
         }
 
@@ -590,7 +594,7 @@ public class MapEditor implements ActionListener {
          * Returns the length of the road
          * @return  - The length of the road
          */
-        public int getLength() {
+        public String getLength() {
             return this.length;
         }
 
@@ -611,11 +615,7 @@ public class MapEditor implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equalsIgnoreCase("[ok]")) {
                 this.roadName = roadNameTextField.getText();
-                try {
-                    this.length = Integer.parseInt(roadLengthTextField.getText());
-                } catch (NumberFormatException ex) {
-                    new ErrorDialog(frame, "Error", "Invalid length: " + roadLengthTextField.getText());
-                }
+                this.length = roadLengthTextField.getText();
                 this.okPressed = true;
             }
             setVisible(false);

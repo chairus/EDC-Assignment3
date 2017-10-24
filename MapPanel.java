@@ -18,12 +18,28 @@ public class MapPanel extends JPanel implements MapListener {
     private Point startPoint, endPoint;     // Start and end point of the selection box
     private RectangleStroke rectangleStroke;      // Represents how the rectangle was drawn
     private Point mouseStartPosition, mouseEndPosition;    // The start and end point of the mouse when drawing the selection box
+    private NewRoadState newRoadState;      // Holds the state of each stage in adding a new road into the map
+    private String newRoadName;                   // Contains the name field of the road to be added
+    private int newRoadLength;                    // Contains the length field of the road to be added
+    private Place startPlace;               // The start place of the new road to be added
+    private PlaceIcon startPlaceIcon;       // The place icon that corresponds to the selected start place
+    private Place endPlace;                 // The end place of the new road to be added
+    private PlaceIcon endPlaceIcon;         // The place icon that corresponds to the selected end place
+    private boolean hasAddedRoad;           // A flag that tells if the new road has been successfully added
 
 
     /**
      * Constructor
      */
     public MapPanel(Map map) {
+        init(map);
+    }
+
+    /**
+     * Initializes the properties of this object and adds listeners.
+     * @param map   - A map object that may contain places and roads
+     */
+    private void init(Map map) {
         this.map = map;
         this.places = new ArrayList<>(map.getPlaces());
         this.placeIcons = new ArrayList<>();
@@ -32,15 +48,20 @@ public class MapPanel extends JPanel implements MapListener {
         this.startPoint = new Point();
         this.endPoint = new Point();
         this.rectangleStroke = RectangleStroke.DOWN_RIGHT;
+        this.newRoadState = NewRoadState.DONE;
+        this.startPlace = null;
+        this.endPlace = null;
+        this.startPlaceIcon = null;
+        this.endPlaceIcon = null;
+        this.hasAddedRoad = false;
         setLayout(null);
-//        setBounds(0, 0, Constants.SCREEN_SIZE.width, Constants.SCREEN_SIZE.height);
         addMouseListeners();
         addMouseMotionListeners();
         addResizeListener();
     }
 
     /**
-     * Adds a component listener that listens is the size of the window has changed.
+     * Adds a component listener that listens if the size of the window has changed.
      */
     private void addResizeListener() {
         this.addComponentListener(new ComponentAdapter() {
@@ -153,6 +174,83 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
+     * Adds a new road into the map by first asking the user to select
+     * the first place, then the second place using the mouse.
+     * @param roadName  - The name of the road
+     * @param length    - The length of the road
+     */
+    public void newRoad(String roadName, int length) {
+        newRoadName = roadName;
+        newRoadLength = length;
+        newRoadState = NewRoadState.FIRST_PLACE;
+        performAction();
+    }
+
+    /**
+     * Perform some action according to the current state it is in
+     */
+    private void performAction() {
+        switch (newRoadState) {
+            case FIRST_PLACE:
+                // TODO: CHANGE THE MOUSE CURSOR TO CROSSHAIR
+                if (getCursor().getType() != Cursor.CROSSHAIR_CURSOR) {
+                    setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+                    System.err.println("CURSOR HAS BEEN CHANGED");
+                }
+                break;
+            case SECOND_PLACE:
+                // TODO: DRAW RUBBER-BAND LINE FROM THE FIRST PLACE TO THE MOUSE CURSOR
+                repaint();
+                break;
+            case ADD_ROAD:
+                // TODO: ADD THE ROAD TO THE MAP OBJECT
+                map.newRoad(startPlace, endPlace, newRoadName, newRoadLength);
+                startPlaceIcon.setIsSelected(false);
+                endPlaceIcon.setIsSelected(false);
+                System.err.println("[ MapPanel ] ROAD ADDED");
+                this.hasAddedRoad = true;
+                updateState(NewRoadState.ADD_ROAD);
+                break;
+            case DONE:
+                // TODO: CHANGE THE MOUSE CURSOR TO DEFAULT
+                if (getCursor().getType() != Cursor.DEFAULT_CURSOR) {
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    System.err.println("CURSOR HAS BEEN CHANGED");
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Update the state according to it's previous state
+     */
+    private void updateState(NewRoadState currentState) {
+        switch (currentState) {
+            case FIRST_PLACE:
+                if (startPlace != null) {
+                    newRoadState = NewRoadState.SECOND_PLACE;
+                    performAction();
+                }
+                break;
+            case SECOND_PLACE:
+                if (endPlace != null) {
+                    newRoadState = NewRoadState.ADD_ROAD;
+                    performAction();
+                }
+                break;
+            case ADD_ROAD:
+                if (hasAddedRoad) {
+                    newRoadState = NewRoadState.DONE;
+                }
+                performAction();
+            default:
+                break;
+        }
+    }
+
+    /**
      * Create and add a PlaceIcon object associated to the given place
      * @param road  - The road that was added into the map
      */
@@ -254,8 +352,38 @@ public class MapPanel extends JPanel implements MapListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.printf("[ MapPanel ] Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
-                boolean hasDeselected = clearSelectedPlaceIcons();
-                if (hasDeselected) repaint();
+                List<PlaceIcon> selectedPlaceIcon;
+                switch (newRoadState) {
+                    case DONE:
+                        boolean hasDeselected = clearSelectedPlaceIcons();
+                        if (hasDeselected) repaint();
+                        break;
+                    case FIRST_PLACE:
+                        System.out.println("[ MapPanel ] mouseClicked: FIRST_PLACE");
+                        selectedPlaceIcon = getSelectedPlaceIcon();
+                        if (selectedPlaceIcon.size() == 1) {
+                            startPlaceIcon = selectedPlaceIcon.get(0);
+                            startPlace = selectedPlaceIcon.get(0).getPlace();
+                        }
+                        updateState(NewRoadState.FIRST_PLACE);
+                        break;
+                    case SECOND_PLACE:
+                        System.out.println("[ MapPanel ] mouseClicked: SECOND_PLACE");
+                        selectedPlaceIcon = getSelectedPlaceIcon();
+                        for (PlaceIcon placeIcon: selectedPlaceIcon) {  // Look for the selected end place
+                            if (placeIcon.getPlace() != startPlace) {   // Found the selected end place of the road
+                                endPlaceIcon = placeIcon;
+                                endPlace = placeIcon.getPlace();
+                                break;
+                            }
+                        }
+                        updateState(NewRoadState.SECOND_PLACE);
+                        break;
+                    default:
+                        System.out.println("DEFAULT");
+                        break;
+                }
+
             }
 
             /**
@@ -326,7 +454,14 @@ public class MapPanel extends JPanel implements MapListener {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                // DO NOTHING FOR NOW
+                switch (newRoadState) {
+                    case SECOND_PLACE:
+                        System.err.println("[ MapPanel ] mouseMoved: SECOND PLACE");
+                        repaint();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
     }
@@ -483,13 +618,25 @@ public class MapPanel extends JPanel implements MapListener {
     protected void paintComponent(Graphics g) {
         System.out.printf("[ MapPanel ] paintComponent called%n");
         super.paintComponent(g);        // Customize what to paint after calling this
-        g.setColor(Color.BLACK);
-        float thickness = 2.0f;
         Graphics2D g2 = (Graphics2D)g;
-        g2.setStroke(new BasicStroke(thickness));
-        int width = this.endPoint.x - this.startPoint.x;
-        int height = this.endPoint.y - this.startPoint.y;
-        g2.drawRect(this.startPoint.x, this.startPoint.y, width, height);
+        switch (newRoadState) {
+            case DONE:
+                g2.setColor(Color.BLACK);
+                g2.setStroke(new BasicStroke(Constants.SELECTION_BOX_THICKNESS));
+                int width = this.endPoint.x - this.startPoint.x;
+                int height = this.endPoint.y - this.startPoint.y;
+                g2.drawRect(this.startPoint.x, this.startPoint.y, width, height);
+                break;
+            case SECOND_PLACE:
+                g.setColor(Color.BLACK);
+                g2.setStroke(new BasicStroke(Constants.ROAD_LINE_THICKNESS));
+                Point mousePosition = getMousePosition();
+                g2.drawLine(startPlaceIcon.getX(), startPlaceIcon.getY(), mousePosition.x, mousePosition.y);
+                break;
+            default:
+                break;
+        }
+
     }
 
     @Override
@@ -522,5 +669,17 @@ public class MapPanel extends JPanel implements MapListener {
         UP_RIGHT,
         DOWN_LEFT,
         DOWN_RIGHT,
+    }
+
+    /**
+     * State that describes the behaviour of each stage when
+     * adding a new road to the map.
+     */
+    private enum NewRoadState {
+        FIRST_PLACE,
+        SECOND_PLACE,
+        ADD_ROAD,
+        ERROR,
+        DONE,
     }
 }
