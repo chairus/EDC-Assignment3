@@ -489,13 +489,16 @@ public class MapEditor implements ActionListener {
     }
 
     /**
-     * Adds a place, provided by the user, into the map object
+     * Adds a place, provided by the user, into the map object and places
+     * it at the center of the map
      */
     private void addPlaceAction() {
         PlaceInputDialog addPlace = new PlaceInputDialog(frame, "Add place", "Please type the name of the place in the input box");
         String placeName = addPlace.getPlaceName();
         System.out.printf("[ addPlaceAction ] Place name is \"%s\"%n", placeName);
-        map.newPlace(placeName, 0, 0);
+        if (addPlace.okPressed) {
+            map.newPlace(placeName, 0, 0);  // Add the new place in the map object and set it's location to be at the center of the map
+        }
     }
 
     /**
@@ -505,9 +508,11 @@ public class MapEditor implements ActionListener {
     private class PlaceInputDialog extends JDialog implements ActionListener {
         private JTextField placeNameTextField;
         private String placeName;
+        private boolean okPressed;
         public PlaceInputDialog (JFrame owner, String title, String message) {
             super(owner, title, true);
-            placeName = "";
+            this.placeName = "";
+            this.okPressed = false;
             createAndShow(owner, message);
         }
 
@@ -552,10 +557,18 @@ public class MapEditor implements ActionListener {
         /**
          * Returns the name of the place that was typed in the
          * text box
-         * @return
+         * @return  - The name of the place as a string
          */
         public String getPlaceName() {
             return this.placeName;
+        }
+
+        /**
+         * Returns true if the ok button is pressed
+         * @return  - True if ok button is pressed, false otherwise
+         */
+        public boolean isOkPressed() {
+            return this.okPressed;
         }
 
         /**
@@ -567,6 +580,7 @@ public class MapEditor implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equalsIgnoreCase("[ok]")) {
                 this.placeName = placeNameTextField.getText();
+                this.okPressed = true;
             }
             setVisible(false);
             dispose();
