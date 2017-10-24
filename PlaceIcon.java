@@ -10,7 +10,8 @@ import java.awt.event.MouseMotionListener;
  */
 
 public class PlaceIcon extends JComponent implements PlaceListener, MouseListener, MouseMotionListener {
-    public int x, y;                           // X and Y coordinates of the place
+    private MapPanel.NewRoadState newRoadState; // Holds the state of each stage in adding a new road into the map
+    public int x, y;                            // X and Y coordinates of the place
     private Place place;                        // The place that this place listener is listening to
     private boolean isSelected;                 // A value that determines if this place icon is selected
     private int xDiff, yDiff;                   // Difference between the x and y coordinate of the exact position of the place icon and its location on the screen
@@ -32,6 +33,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         this.addMouseMotionListener(this);
         this.isSelected = false;
         this.placeIconState = PlaceIconState.DESELECTED;
+        this.newRoadState = MapPanel.NewRoadState.DONE;
     }
 
     /**
@@ -133,6 +135,14 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         return selectedColor;
     }
 
+    /**
+     * Sets this object's "newRoadState" field
+     * @param nextState - The next state
+     */
+    public void setNewRoadState(MapPanel.NewRoadState nextState) {
+        this.newRoadState = nextState;
+    }
+
     //////////////////////
     //  MOUSE LISTENERS //
     //////////////////////
@@ -146,6 +156,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
+        System.out.println("[ PlaceIcon ] newRoadState: " + newRoadState);
         isSelected = !isSelected;
         if (this.isSelected) {
             placeIconState = PlaceIconState.SELECTED;
@@ -155,6 +166,46 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
             if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
         }
         repaint();
+        switch (newRoadState) {
+            case FIRST_PLACE:
+//                isSelected = !isSelected;
+//                if (this.isSelected) {
+//                    placeIconState = PlaceIconState.SELECTED;
+//                } else {
+//                    placeIconState = PlaceIconState.DESELECTED;
+//                    if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
+//                    if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
+//                }
+//                repaint();
+                this.getParent().dispatchEvent(e);
+                System.err.println("[ PlaceIcon ] mouseClicked: EVENT DISPATCHED FIRST_PLACE");
+                break;
+            case SECOND_PLACE:
+//                isSelected = !isSelected;
+//                if (this.isSelected) {
+//                    placeIconState = PlaceIconState.SELECTED;
+//                } else {
+//                    placeIconState = PlaceIconState.DESELECTED;
+//                    if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
+//                    if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
+//                }
+//                repaint();
+                this.getParent().dispatchEvent(e);
+                System.err.println("[ PlaceIcon ] mouseClicked: EVENT DISPATCHED SECOND_PLACE");
+                break;
+            default:
+//                isSelected = !isSelected;
+//                if (this.isSelected) {
+//                    placeIconState = PlaceIconState.SELECTED;
+//                } else {
+//                    placeIconState = PlaceIconState.DESELECTED;
+//                    if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
+//                    if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
+//                }
+//                repaint();
+                break;
+        }
+
     }
 
     /**
