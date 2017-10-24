@@ -189,6 +189,7 @@ public class MapPanel extends JPanel implements MapListener {
             placeIcon.setIsSelected(false);
         }
         updatePlaceIconsNewRoadState(newRoadState);
+        performAction();
     }
 
     /**
