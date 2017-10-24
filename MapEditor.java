@@ -252,6 +252,9 @@ public class MapEditor implements ActionListener {
             } else if (actionCommand.contains("add place")) {
                 addPlaceAction();
             } else if (actionCommand.contains("add road")) {
+                if (map.getPlaces().size() < 2) {
+                    throw new IllegalArgumentException("Please add two or more places first before adding a road.");
+                }
                 addRoadAction();
             }
         } catch (MapFormatException e) {

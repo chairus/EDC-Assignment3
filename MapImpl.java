@@ -211,7 +211,7 @@ public class MapImpl implements Map {
         }
 
         Road foundRoad = from.roadTo(to);
-        if (foundRoad != null && roadName.equalsIgnoreCase(foundRoad.roadName())) {
+        if (foundRoad != null) {
             throw new IllegalArgumentException("Road already exists");
         }
 
