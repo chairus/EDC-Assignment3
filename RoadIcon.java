@@ -47,19 +47,20 @@ public class RoadIcon extends JComponent implements RoadListener{
         g2.setColor(Color.BLACK);
         g2.setStroke(new BasicStroke(Constants.ROAD_LINE_THICKNESS));
         g2.drawLine(start.x, start.y, end.x, end.y);
+        String roadNameAndLength = this.road.roadName() + "(" + this.road.length() + ")";
         int lineMidXCoordinate = start.x + (end.x - start.x)/2;
         int lineMidYCoordinate = start.y + (end.y - start.y)/2;
         if (start.x > end.x) {
             lineMidXCoordinate = end.x + (start.x - end.x)/2;
         }
-        if (lineMidXCoordinate >= MapEditor.frame.getWidth() - 100) {    // If the x-coordinate is close to the edge of the frame
-            lineMidXCoordinate -= 50;                                    // Shift the name of the road and its length to the left
+        if (lineMidXCoordinate >= MapEditor.frame.getWidth() - 75) {    // If the x-coordinate is close to the edge of the frame
+            lineMidXCoordinate -= (13*roadNameAndLength.length()/2);            // Shift the name of the road and its length to the left
         }
         if (start.y > end.y) {
             lineMidYCoordinate = end.y + (start.y - end.y)/2;
         }
         g2.setColor(Color.BLUE);
-        g2.drawString(this.road.roadName() + "(" + this.road.length() + ")", lineMidXCoordinate, lineMidYCoordinate);
+        g2.drawString(roadNameAndLength, lineMidXCoordinate, lineMidYCoordinate);
     }
 
     /**
