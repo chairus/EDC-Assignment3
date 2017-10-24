@@ -17,7 +17,7 @@ public class MapPanel extends JPanel implements MapListener {
     private Map map;                        // A map object that stores the current map
     private Point startPoint, endPoint;     // Start and end point of the selection box
     private RectangleStroke rectangleStroke;      // Represents how the rectangle was drawn
-    private Point mouseStartPosition, mouseEndPosition;    //
+    private Point mouseStartPosition, mouseEndPosition;    // The start and end point of the mouse when drawing the selection box
 
 
     /**
@@ -27,6 +27,8 @@ public class MapPanel extends JPanel implements MapListener {
         this.map = map;
         this.places = new ArrayList<>(map.getPlaces());
         this.placeIcons = new ArrayList<>();
+        this.roads = new ArrayList<>(map.getRoads());
+        this.roadIcons = new ArrayList<>();
         this.startPoint = new Point();
         this.endPoint = new Point();
         this.rectangleStroke = RectangleStroke.DOWN_RIGHT;
@@ -74,7 +76,7 @@ public class MapPanel extends JPanel implements MapListener {
 
     /**
      * Removes the place icon associated to the removed place
-     * @param place - The places that were removed
+     * @param place - The place that was removed
      */
     private void removePlaceIcon(Place place) {
         int placeIconsIndex = 0;
@@ -105,8 +107,10 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
-     * Updates the list of places maintained by this MapPanel object by comparing the map's places and this
-     * MapPanel's object places.
+     * Updates the list of places maintained by this MapPanel object by comparing the
+     * map's places and this MapPanel's object places. If a place is in the map then
+     * it would be removed from a copy of the list of places in this object's map and the
+     * remaining places after will be added on the map panel.
      */
     private void updatePlaces() {
         List<Place> mapPlaces = new ArrayList<>(map.getPlaces());
@@ -149,10 +153,75 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
+     * Create and add a PlaceIcon object associated to the given place
+     * @param road  - The road that was added into the map
+     */
+    private void addRoadIcon(Road road) {
+        RoadIcon roadIcon = new RoadIcon(road);
+        road.addListener(roadIcon);
+        this.roadIcons.add(roadIcon);
+        this.add(roadIcon);                                // Add a place icon associated to the added place into the JPanel
+        roadIcon.paintComponent(this.getGraphics());
+    }
+
+    /**
+     * Removes the place icon associated to the removed place
+     * @param road  - The road icon associated to road that was removed
+     */
+    private void removeRoadIcon(Road road) {
+        int roadIconsIndex = 0;
+        while (roadIconsIndex < this.roadIcons.size()) {
+            RoadIcon roadIcon = this.roadIcons.get(roadIconsIndex);
+            if (areEqual(roadIcon.getRoad(), road)) {
+                this.roadIcons.remove(roadIcon);
+                this.remove(roadIcon);                     // Remove from the JPanel to remove it from the GUI
+                roadIconsIndex -= 1;
+            }
+            roadIconsIndex += 1;
+        }
+    }
+
+    /**
      * Updates the list of roads maintained by this map panel
      */
     private void updateRoads() {
-        
+        List<Road> mapRoads = new ArrayList<>(map.getRoads());
+        ///////////////////////////////////////////////////////////////
+        //  REMOVE ROADS in this.roads THAT ARE NOT IN THE mapRoads  //
+        ///////////////////////////////////////////////////////////////
+        int roadsIndex = 0;
+        while (roadsIndex < this.roads.size()) {
+            if (mapRoads.size() == 0) {                        // This means that the remaining roads in the roads list are not in the map's roads
+                removePlaceIcon(this.places.get(roadsIndex));  // Remove the roadIcon associated to this road
+                this.roads.remove(roadsIndex);
+                continue;
+            }
+            int mapRoadsIndex = 0;
+            boolean removeRoadFlag = true;                     // This stays true if a road in this.roads is not in mapRoads list
+            while (mapRoadsIndex < mapRoads.size()) {
+                if (areEqual(this.roads.get(roadsIndex), mapRoads.get(mapRoadsIndex))) {
+                    mapRoads.remove(mapRoadsIndex);
+                    removeRoadFlag = false;
+                    break;
+                }
+                mapRoadsIndex += 1;
+            }
+            if (removeRoadFlag) {
+                removeRoadIcon(this.roads.get(roadsIndex));  // Remove the roadsIcon associated to this road
+                this.roads.remove(roadsIndex);
+                continue;
+            }
+            roadsIndex += 1;
+        }
+        //////////////////////////////////////////////////////////////////////////////
+        //  ADD ROADS into this.roads that are in mapRoads but not in this.roads    //
+        //////////////////////////////////////////////////////////////////////////////
+        if (mapRoads.size() != 0) {                            // If there are new roads that has been added
+            for (Road road: mapRoads) {
+                this.roads.add(road);
+                addRoadIcon(road);
+            }
+        }
     }
 
     /**
@@ -319,6 +388,22 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
+     * Checks if two roads are equal or not
+     * @param r1    - The first road
+     * @param r2    - The second road
+     * @return      - True if they are equal, false otherwise
+     */
+    private static boolean areEqual(Road r1, Road r2) {
+        if (areEqual(r1.firstPlace(), r2.firstPlace()) &&
+                areEqual(r1.secondPlace(), r2.secondPlace()) &&
+                r1.roadName().equalsIgnoreCase(r2.roadName()) &&
+                r1.length() == r2.length()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Sets correctly the start and end point of the rectangle depending on how it was
      * drawn and also update the state on how the rectangle is drawn
      */
@@ -417,7 +502,13 @@ public class MapPanel extends JPanel implements MapListener {
     @Override
     public void roadsChanged() {
         System.out.println("roadsChanged");
+        System.out.println("BEFORE:");
+        System.out.printf("Number of roads: %d%n", this.roads.size());
+        System.out.printf("Number of roadIcons: %d%n", this.roadIcons.size());
         updateRoads();
+        System.out.println("AFTER:");
+        System.out.printf("Number of roads: %d%n", this.roads.size());
+        System.out.printf("Number of roadIcons: %d%n", this.roadIcons.size());
         repaint();
     }
 
