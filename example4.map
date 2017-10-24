@@ -1,0 +1,5 @@
+# [keyword placeName x-coordinate y-coordinate]
+place PortAugusta 100 200
+place Woomera 43 123
+# [keyword placeOne roadName roadLength placeTwo]
+road PortAugusta B83 230 Woomera
