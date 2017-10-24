@@ -284,8 +284,8 @@ public class MapPanel extends JPanel implements MapListener {
                 int height = endPoint.y - startPoint.y;
                 List<Component> selectedPlaceIcons = getIntersectedComponents(new Rectangle(startPoint.x, startPoint.y, width, height));
                 setIsSelected(selectedPlaceIcons);
-                endPoint = new Point(-1,-1);        // To remove the drawn rectangle
-                rectangleStroke = RectangleStroke.DOWN_RIGHT;    // Reset the stroke
+                endPoint = new Point(-1,-1);                // To remove the drawn rectangle
+                rectangleStroke = RectangleStroke.DOWN_RIGHT;     // Reset the stroke
                 repaint();
             }
 
@@ -451,7 +451,7 @@ public class MapPanel extends JPanel implements MapListener {
         List<Component> selectedComponents = new ArrayList<>();
         Component[] placeIconComponents = this.getComponents();
         for (Component comp: placeIconComponents) {
-            if (selectionBox.contains(comp.getBounds())) {
+            if (selectionBox.intersects(comp.getBounds())) {
                 selectedComponents.add(comp);
             }
         }
@@ -464,8 +464,8 @@ public class MapPanel extends JPanel implements MapListener {
      */
     private void setIsSelected(List<Component> components) {
         for (Component comp: components) {
-            PlaceIcon placeIcon = (PlaceIcon)comp;
-            if (!placeIcon.getPlace().isStartPlace() && !placeIcon.getPlace().isEndPlace()) {
+            if (comp instanceof PlaceIcon) {
+                PlaceIcon placeIcon = (PlaceIcon)comp;
                 placeIcon.setIsSelected(true);
             }
         }
@@ -502,13 +502,7 @@ public class MapPanel extends JPanel implements MapListener {
     @Override
     public void roadsChanged() {
         System.out.println("roadsChanged");
-        System.out.println("BEFORE:");
-        System.out.printf("Number of roads: %d%n", this.roads.size());
-        System.out.printf("Number of roadIcons: %d%n", this.roadIcons.size());
         updateRoads();
-        System.out.println("AFTER:");
-        System.out.printf("Number of roads: %d%n", this.roads.size());
-        System.out.printf("Number of roadIcons: %d%n", this.roadIcons.size());
         repaint();
     }
 

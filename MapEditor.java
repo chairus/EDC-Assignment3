@@ -496,7 +496,7 @@ public class MapEditor implements ActionListener {
         PlaceInputDialog addPlace = new PlaceInputDialog(frame, "Add place", "Please type the name of the place in the input box");
         String placeName = addPlace.getPlaceName();
         System.out.printf("[ addPlaceAction ] Place name is \"%s\"%n", placeName);
-        if (addPlace.okPressed) {
+        if (addPlace.isOkPressed()) {
             map.newPlace(placeName, 0, 0);  // Add the new place in the map object and set it's location to be at the center of the map
         }
     }

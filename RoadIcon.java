@@ -38,11 +38,6 @@ public class RoadIcon extends JComponent implements RoadListener{
         Point start = getGridCoordinates(this.road.firstPlace());
         Point end = getGridCoordinates(this.road.secondPlace());
         updateBounds();
-        System.err.printf("First place: %s%n", this.road.firstPlace().toString());
-        System.err.printf("Second place: %s%n", this.road.secondPlace().toString());
-        System.out.println("Start and end point of the drawn line:");
-        System.err.printf("Start(x,y): (%d,%d)%n", start.x, start.y);
-        System.err.printf("End(x,y): (%d,%d)%n", end.x, end.y);
         Graphics2D g2 = (Graphics2D)g;
         g2.setColor(Color.BLACK);
         g2.setStroke(new BasicStroke(Constants.ROAD_LINE_THICKNESS));
@@ -88,7 +83,6 @@ public class RoadIcon extends JComponent implements RoadListener{
     @Override
     public void roadChanged() {
         System.out.println("[ RoadIcon ] roadChanged called");
-//        this.setBounds(0,0, MapEditor.frame.getWidth(), MapEditor.frame.getHeight());
         repaint();
     }
 }

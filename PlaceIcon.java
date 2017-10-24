@@ -14,6 +14,8 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     private Place place;                        // The place that this place listener is listening to
     private boolean isSelected;                 // A value that determines if this place icon is selected
     private int xDiff, yDiff;                   // Difference between the x and y coordinate of the exact position of the place icon and its location on the screen
+    private PlaceIconState placeIconState;      // Represents the state of the place icon
+                                                // { DESELECT, SELECT, START, END }
 
     @SuppressWarnings("Default constructor not available")
     private PlaceIcon() {}
@@ -29,6 +31,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.isSelected = false;
+        this.placeIconState = PlaceIconState.DESELECTED;
     }
 
     /**
@@ -57,6 +60,13 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     public void setIsSelected(boolean val) {
         this.isSelected = val;
+        if (val) {
+            placeIconState = PlaceIconState.SELECTED;
+        } else {
+            placeIconState = PlaceIconState.DESELECTED;
+            if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
+            if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
+        }
         repaint();
     }
 
@@ -72,17 +82,24 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     public void placeChanged() {
         System.out.printf("[ PlaceIcon ] placeChanged called%n");
         this.updatePlaceIconCoordinate();
+        if (this.place.isStartPlace()) {
+            placeIconState = PlaceIconState.START;
+            if (this.isSelected) this.isSelected = false;
+        } else if (this.place.isEndPlace()) {
+            placeIconState = PlaceIconState.END;
+            if (this.isSelected) this.isSelected = false;
+        } else {
+            if (this.isSelected) placeIconState = PlaceIconState.SELECTED;
+            else placeIconState = PlaceIconState.DESELECTED;
+        }
         repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         System.out.println("[ PlaceIcon ] paintComponent called");
-        super.paintComponent(g);            // Customize what to paint after calling this
+        super.paintComponent(g);             // Customize what to paint after calling this
         Color fillColor = selectColor();
-        if (fillColor == null) {            // The place is not in one of the state {SELECTED,START,END}
-            fillColor = this.getBackground();
-        }
         g.setColor(fillColor);
         g.fillRect(0, 0, Constants.PLACE_WIDTH, Constants.PLACE_HEIGHT);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
         Graphics2D g2 = (Graphics2D)g;
@@ -97,22 +114,22 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      * @return  - The selected color(BLUE for selected place, RED for start, GREEN for end)
      */
     private Color selectColor() {
-        Color selectedColor = null;
-        if (this.isSelected && !this.place.isStartPlace() && !this.place.isEndPlace()) {
-            selectedColor = Color.BLUE;
+        Color selectedColor;
+        switch (placeIconState) {
+            case START:
+                selectedColor = Color.RED;
+                break;
+            case END:
+                selectedColor = Color.GREEN;
+                break;
+            case SELECTED:
+                selectedColor = Color.BLUE;
+                break;
+            default:
+                selectedColor = this.getBackground();
+                break;
         }
-        if (this.place.isStartPlace()) {
-            selectedColor = Color.RED;
-            if (this.isSelected) {
-                this.isSelected = false;
-            }
-        }
-        if (this.place.isEndPlace()) {
-            selectedColor = Color.GREEN;
-            if (this.isSelected) {
-                this.isSelected = false;
-            }
-        }
+
         return selectedColor;
     }
 
@@ -132,10 +149,15 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 //        System.out.printf("isSelected before: %s%n", isSelected);
 //        System.out.printf("isStartPlace: %s%n", this.place.isStartPlace());
 //        System.out.printf("isEndPlace: %s%n", this.place.isEndPlace());
-        if (!this.place.isStartPlace() && !this.place.isEndPlace()) {
-            isSelected = !isSelected;
-            repaint();
+        isSelected = !isSelected;
+        if (this.isSelected) {
+            placeIconState = PlaceIconState.SELECTED;
+        } else {
+            placeIconState = PlaceIconState.DESELECTED;
+            if (this.place.isStartPlace()) placeIconState = PlaceIconState.START;
+            if (this.place.isEndPlace()) placeIconState = PlaceIconState.END;
         }
+        repaint();
 //        System.out.printf("isSelected after: %s%n", isSelected);
     }
 
@@ -229,5 +251,15 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 //        System.out.printf("[ PlaceIcon ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
 //        Point screenLocation = e.getLocationOnScreen();
 //        System.out.printf("[ PlaceIcon ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+    }
+
+    /**
+     * Determines which color the place icon should take place
+     */
+    private enum PlaceIconState {
+        SELECTED,
+        DESELECTED,
+        START,
+        END
     }
 }
