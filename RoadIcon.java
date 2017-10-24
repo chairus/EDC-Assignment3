@@ -37,7 +37,7 @@ public class RoadIcon extends JComponent implements RoadListener{
     private void drawRoad(Graphics g) {
         Point start = getGridCoordinates(this.road.firstPlace());
         Point end = getGridCoordinates(this.road.secondPlace());
-        updateBounds(start, end);
+        updateBounds();
         System.err.printf("First place: %s%n", this.road.firstPlace().toString());
         System.err.printf("Second place: %s%n", this.road.secondPlace().toString());
         System.out.println("Start and end point of the drawn line:");
@@ -45,18 +45,27 @@ public class RoadIcon extends JComponent implements RoadListener{
         System.err.printf("End(x,y): (%d,%d)%n", end.x, end.y);
         Graphics2D g2 = (Graphics2D)g;
         g2.setColor(Color.BLACK);
-        g2.setStroke(new BasicStroke(Constants.LINE_THICKNESS));
+        g2.setStroke(new BasicStroke(Constants.ROAD_LINE_THICKNESS));
         g2.drawLine(start.x, start.y, end.x, end.y);
+        int lineMidXCoordinate = start.x + (end.x - start.x)/2;
+        int lineMidYCoordinate = start.y + (end.y - start.y)/2;
+        if (start.x > end.x) {
+            lineMidXCoordinate = end.x + (start.x - end.x)/2;
+        }
+        if (lineMidXCoordinate >= MapEditor.frame.getWidth() - 100) {    // If the x-coordinate is close to the edge of the frame
+            lineMidXCoordinate -= 50;                                    // Shift the name of the road and its length to the left
+        }
+        if (start.y > end.y) {
+            lineMidYCoordinate = end.y + (start.y - end.y)/2;
+        }
+        g2.setColor(Color.BLUE);
+        g2.drawString(this.road.roadName() + "(" + this.road.length() + ")", lineMidXCoordinate, lineMidYCoordinate);
     }
 
     /**
      * Update the bounds of the drawn line
-     * @param start - One of end of the line
-     * @param end   - The other end of the line
      */
-    private void updateBounds(Point start, Point end) {
-        int width = Math.abs(start.x - end.x);
-        int height = Math.abs(start.y - end.y);
+    private void updateBounds() {
         this.setBounds(0, 0, MapEditor.frame.getWidth(), MapEditor.frame.getHeight());
     }
 

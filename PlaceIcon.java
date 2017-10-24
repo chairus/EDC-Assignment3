@@ -87,7 +87,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         g.fillRect(0, 0, Constants.PLACE_WIDTH, Constants.PLACE_HEIGHT);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
         Graphics2D g2 = (Graphics2D)g;
         g2.setColor(Color.BLACK);
-        g2.setStroke(new BasicStroke(Constants.LINE_THICKNESS));
+        g2.setStroke(new BasicStroke(Constants.PLACE_LINE_THICKNESS));
         g2.drawRect(0, 0, Constants.PLACE_WIDTH, Constants.PLACE_HEIGHT);      // Draw the rectangle relative to the upper left corner of the rectangular bound set in the method setBounds()
     }
 
