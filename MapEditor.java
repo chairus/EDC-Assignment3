@@ -744,7 +744,7 @@ public class MapEditor implements ActionListener {
      * An error dialog class that creates and shows a dialog box with the error message.
      * @author cyrusvillacampa
      */
-    private class ErrorDialog extends JDialog implements ActionListener {
+    public static class ErrorDialog extends JDialog implements ActionListener {
         public ErrorDialog (JFrame owner, String title, String message) {
             super(owner, title, true);
             JPanel messagePanel = new JPanel();

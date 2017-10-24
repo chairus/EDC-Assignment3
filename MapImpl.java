@@ -210,6 +210,11 @@ public class MapImpl implements Map {
             throw new IllegalArgumentException("Invalid road name.");
         }
 
+        Road foundRoad = from.roadTo(to);
+        if (foundRoad != null && roadName.equalsIgnoreCase(foundRoad.roadName())) {
+            throw new IllegalArgumentException("Road already exists");
+        }
+
         if (length <= 0) {
             throw new IllegalArgumentException("Negative/Zero road length.");
         }

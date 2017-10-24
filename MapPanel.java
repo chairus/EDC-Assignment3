@@ -189,7 +189,6 @@ public class MapPanel extends JPanel implements MapListener {
             placeIcon.setIsSelected(false);
         }
         updatePlaceIconsNewRoadState(newRoadState);
-        performAction();
     }
 
     /**
@@ -198,31 +197,33 @@ public class MapPanel extends JPanel implements MapListener {
     private void performAction() {
         switch (newRoadState) {
             case FIRST_PLACE:
-                // TODO: CHANGE THE MOUSE CURSOR TO CROSSHAIR
                 if (getCursor().getType() != Cursor.CROSSHAIR_CURSOR) {
                     setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
                     System.err.println("CURSOR HAS BEEN CHANGED");
                 }
                 break;
             case SECOND_PLACE:
-                // TODO: DRAW RUBBER-BAND LINE FROM THE FIRST PLACE TO THE MOUSE CURSOR
                 repaint();
                 break;
             case ADD_ROAD:
-                // TODO: ADD THE ROAD TO THE MAP OBJECT
-                map.newRoad(startPlace, endPlace, newRoadName, newRoadLength);
-                startPlace = null;
-                endPlace = null;
-                startPlaceIcon.setIsSelected(false);
-                endPlaceIcon.setIsSelected(false);
-                startPlaceIcon = null;
-                endPlaceIcon = null;
-                System.err.println("[ MapPanel ] ROAD ADDED");
-                this.hasAddedRoad = true;
-                updateState(NewRoadState.ADD_ROAD);
-                break;
+                try {
+                    map.newRoad(startPlace, endPlace, newRoadName, newRoadLength);
+                } catch (Exception e) {
+                    new MapEditor.ErrorDialog(MapEditor.frame, "Warning", e.getMessage());
+                } finally {
+                    startPlace = null;
+                    endPlace = null;
+                    startPlaceIcon.setIsSelected(false);
+                    endPlaceIcon.setIsSelected(false);
+                    startPlaceIcon = null;
+                    endPlaceIcon = null;
+                    System.err.println("[ MapPanel ] ROAD ADDED");
+                    this.hasAddedRoad = true;
+                    repaint();
+                    updateState(NewRoadState.ADD_ROAD);
+                    break;
+                }
             case DONE:
-                // TODO: CHANGE THE MOUSE CURSOR TO DEFAULT
                 if (getCursor().getType() != Cursor.DEFAULT_CURSOR) {
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     System.err.println("CURSOR HAS BEEN CHANGED");
@@ -391,10 +392,6 @@ public class MapPanel extends JPanel implements MapListener {
                             startPlace = placeIcon.getPlace();
                             break;
                         }
-//                        if (selectedPlaceIcon.size() == 1) {
-//                            startPlaceIcon = selectedPlaceIcon.get(0);
-//                            startPlace = selectedPlaceIcon.get(0).getPlace();
-//                        }
                         updateState(NewRoadState.FIRST_PLACE);
                         break;
                     case SECOND_PLACE:
@@ -666,8 +663,6 @@ public class MapPanel extends JPanel implements MapListener {
                 Point mousePosition = MouseInfo.getPointerInfo().getLocation();
                 mousePosition.x -= getLocationOnScreen().x;
                 mousePosition.y -= getLocationOnScreen().y;
-                System.err.println("[ MapPanel ] paintComponent mousePosition: " + mousePosition);
-                System.err.println("[ MapPanel ] paintComponent startPlaceIcon: " + startPlaceIcon);
                 g2.drawLine(startPlaceIcon.x, startPlaceIcon.y, mousePosition.x, mousePosition.y);
                 break;
             default:
