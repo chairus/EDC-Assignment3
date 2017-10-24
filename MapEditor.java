@@ -251,6 +251,8 @@ public class MapEditor implements ActionListener {
                 setEndPlaceAction();
             } else if (actionCommand.contains("add place")) {
                 addPlaceAction();
+            } else if (actionCommand.contains("add road")) {
+                addRoadAction();
             }
         } catch (MapFormatException e) {
             System.err.println("MapFormatException: " + e.getMessage());
@@ -260,6 +262,9 @@ public class MapEditor implements ActionListener {
             new ErrorDialog(frame, "Error", e.getMessage());
         } catch (IllegalArgumentException e) {
             System.err.println("IllegalArgumentException: " + e.getMessage());
+            new ErrorDialog(frame, "Error", e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
             new ErrorDialog(frame, "Error", e.getMessage());
         }
     }
@@ -493,11 +498,128 @@ public class MapEditor implements ActionListener {
      * it at the center of the map
      */
     private void addPlaceAction() {
-        PlaceInputDialog addPlace = new PlaceInputDialog(frame, "Add place", "Please type the name of the place in the input box");
+        PlaceInputDialog addPlace = new PlaceInputDialog(frame, "Add place", "Place name");
         String placeName = addPlace.getPlaceName();
         System.out.printf("[ addPlaceAction ] Place name is \"%s\"%n", placeName);
         if (addPlace.isOkPressed()) {
             map.newPlace(placeName, 0, 0);  // Add the new place in the map object and set it's location to be at the center of the map
+        }
+    }
+
+    private void addRoadAction() {
+        RoadInputDialog addRoad = new RoadInputDialog(frame, "Add road");
+        String roadName = addRoad.getRoadName();
+        int roadLength = addRoad.getLength();
+        System.out.printf("[ addRoadAction ] Road name is \"%s\"%n", roadName);
+        System.out.printf("[ addRoadAction ] Road length is %d%n", roadLength);
+        if (addRoad.isOkPressed()) {
+            System.out.printf("[OK] button pressed%n");
+        }
+    }
+
+    /**
+     * An input dialog class that creates and shows a dialog box with a message
+     * and two input boxes where the user can type in.
+     */
+    private class RoadInputDialog extends JDialog implements ActionListener {
+        private boolean okPressed;
+        private String roadName;
+        private int length;
+        private JTextField roadNameTextField;
+        private JTextField roadLengthTextField;
+        public RoadInputDialog (JFrame owner, String title) {
+            super(owner, title, true);
+            this.okPressed = false;
+            setLayout(new GridLayout(3,2));
+            roadName = "";
+            length = 0;
+            this.createAndShow(owner);
+        }
+
+        private void createAndShow(JFrame owner) {
+            setPreferredSize(new Dimension(350, 175));
+            // Label and input for road name
+            JPanel roadNamePanel = new JPanel();
+            JLabel roadNameLabel = new JLabel();
+            roadNameLabel.setText("Road name");
+            roadNameLabel.setFont(new Font(roadNameLabel.getFont().getFontName(), Font.BOLD, 15));
+            roadNamePanel.add(roadNameLabel);
+            this.add(roadNamePanel);
+            JPanel roadNameInputPanel = new JPanel();
+            roadNameTextField = new JTextField();
+            roadNameTextField.setPreferredSize(new Dimension(150, 22));
+            roadNameInputPanel.add(roadNameTextField);
+            this.add(roadNameInputPanel);
+            // Label and input for road length
+            JPanel roadLengthPanel = new JPanel();
+            JLabel roadLengthLabel = new JLabel();
+            roadLengthLabel.setText("Road length");
+            roadLengthLabel.setFont(new Font(roadNameLabel.getFont().getFontName(), Font.BOLD, 15));
+            roadLengthPanel.add(roadLengthLabel);
+            this.add(roadLengthPanel);
+            JPanel roadLengthInputPanel = new JPanel();
+            roadLengthTextField = new JTextField();
+            roadLengthTextField.setPreferredSize(new Dimension(150, 22));
+            roadLengthInputPanel.add(roadLengthTextField);
+            this.add(roadLengthInputPanel);
+            // Buttons
+            JButton okButton = new JButton("[OK]");
+            okButton.addActionListener(this);
+            JButton cancelButton = new JButton("[Cancel]");
+            cancelButton.addActionListener(this);
+            this.add(okButton);
+            this.add(cancelButton);
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            pack();
+            if (owner != null) {
+                setLocationRelativeTo(owner);
+            }
+            setVisible(true);
+        }
+
+        /**
+         * Returns the name of the road that was typed in the
+         * text box
+         * @return  - The name of the road as a string
+         */
+        public String getRoadName() {
+            return this.roadName;
+        }
+
+        /**
+         * Returns the length of the road
+         * @return  - The length of the road
+         */
+        public int getLength() {
+            return this.length;
+        }
+
+        /**
+         * Returns true if the ok button is pressed
+         * @return  - True if ok button is pressed, false otherwise
+         */
+        public boolean isOkPressed() {
+            return this.okPressed;
+        }
+
+        /**
+         * Invoked when an action occurs.
+         *
+         * @param e
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equalsIgnoreCase("[ok]")) {
+                this.roadName = roadNameTextField.getText();
+                try {
+                    this.length = Integer.parseInt(roadLengthTextField.getText());
+                } catch (NumberFormatException ex) {
+                    new ErrorDialog(frame, "Error", "Invalid length: " + roadLengthTextField.getText());
+                }
+                this.okPressed = true;
+            }
+            setVisible(false);
+            dispose();
         }
     }
 
@@ -513,39 +635,32 @@ public class MapEditor implements ActionListener {
             super(owner, title, true);
             this.placeName = "";
             this.okPressed = false;
+            setLayout(new GridLayout(2,2));
             createAndShow(owner, message);
         }
 
         private void createAndShow(JFrame owner, String message) {
             JPanel messagePanel = new JPanel();
-            setPreferredSize(new Dimension(450, 275));
+            setPreferredSize(new Dimension(350, 175));
             JLabel messageLabel = new JLabel();
-            // To provide a wrap around effect of the label's text and also to center align the text.
-            String labelText = String.format(String.format("<html><div style=\"width:%dpx;text-align:center\">%s</div></html>",
-                    250,
-                    message));
             // Labels
-            messageLabel.setText(labelText);
-            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
+            messageLabel.setText(message);
+            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 15));
             messagePanel.add(messageLabel);
-            getContentPane().add(messagePanel, BorderLayout.NORTH);
+            this.add(messagePanel);
             // Inputs
             JPanel inputPanel = new JPanel();
             placeNameTextField = new JTextField();
-            placeNameTextField.setPreferredSize(new Dimension(180, 40));
+            placeNameTextField.setPreferredSize(new Dimension(150, 22));
             inputPanel.add(placeNameTextField);
-            getContentPane().add(inputPanel, BorderLayout.CENTER);
+            this.add(inputPanel);
             // Buttons
-            JPanel buttonPanel = new JPanel();
             JButton okButton = new JButton("[OK]");
-            okButton.setPreferredSize(new Dimension(150, 40));
-            buttonPanel.add(okButton);
             okButton.addActionListener(this);
             JButton cancelButton = new JButton("[Cancel]");
-            cancelButton.setPreferredSize(new Dimension(150, 40));
-            buttonPanel.add(cancelButton);
             cancelButton.addActionListener(this);
-            getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+            this.add(okButton);
+            this.add(cancelButton);
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             pack();
             if (owner != null) {
