@@ -7,7 +7,6 @@
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -241,10 +240,6 @@ public class MapImpl implements Map {
                 for (MapListener ml: mapListeners) {
                     ml.roadsChanged();
                 }
-                // Invoke the method on each road listener
-//                for (RoadListener rl: ((RoadImpl)r).getListeners()) {
-//                    rl.roadChanged();
-//                }
             }
         }
     }
@@ -272,8 +267,6 @@ public class MapImpl implements Map {
 
         if (p == null) {
             if (this.startPlace != null) {
-                // PlaceImpl placeImpl = (PlaceImpl)this.findPlace(this.startPlace.getName());
-                // placeImpl.setStartPlace(false);
                 ((PlaceImpl)this.startPlace).setStartPlace(false);
             }
             this.startPlace = null;
@@ -316,8 +309,6 @@ public class MapImpl implements Map {
 
         if (p == null) {
             if (this.endPlace != null) {
-                // PlaceImpl placeImpl = (PlaceImpl)this.findPlace(this.endPlace.getName());
-                // placeImpl.setEndPlace(false);
                 ((PlaceImpl)this.endPlace).setEndPlace(false);
             }
             this.endPlace = null;
@@ -347,12 +338,15 @@ public class MapImpl implements Map {
     }
 
 
-    //Causes the map to compute the shortest trip between the
-    //"start" and "end" places
-    //For each road on the shortest route, sets the "isChosen" property
-    //to "true".
-    //Returns the total distance of the trip.
-    //Returns -1, if there is no route from start to end
+    /**
+     * Causes the map to compute the shortest trip between the
+     * "start" and "end" places
+     * For each road on the shortest route, sets the "isChosen" property
+     * to "true".
+     * Returns the total distance of the trip.
+     * Returns -1, if there is no route from start to end
+     * @return  - The total trip distance from the start to the end place
+     */
     public int getTripDistance() {
         // Unset or deselect the chosen roads from previous start and end place
         for (Road road: this.roads) {
@@ -373,16 +367,19 @@ public class MapImpl implements Map {
     }
 
 
-    //Return a string describing this map
-    //Returns a string that contains (in this order):
-    //for each place in the map, a line (terminated by \n)
-    //  PLACE followed the toString result for that place
-    //for each road in the map, a line (terminated by \n)
-    //  ROAD followed the toString result for that road
-    //if a starting place has been defined, a line containing
-    //  START followed the name of the starting-place (terminated by \n)
-    //if an ending place has been defined, a line containing
-    //  END followed the name of the ending-place (terminated by \n)
+    /**
+     * Return a string describing this map
+     * Returns a string that contains (in this order):
+     * for each place in the map, a line (terminated by \n)
+     *   PLACE followed the toString result for that place
+     * for each road in the map, a line (terminated by \n)
+     *   ROAD followed the toString result for that road
+     * if a starting place has been defined, a line containing
+     *   START followed the name of the starting-place (terminated by \n)
+     * if an ending place has been defined, a line containing
+     *   END followed the name of the ending-place (terminated by \n)
+     * @return  - String representation of the map
+     */
     public String toString() {
         String str = "";
 
@@ -710,13 +707,6 @@ public class MapImpl implements Map {
     private void removeRoads(Place p) {
         // And remove all roads associated with this place
         ArrayList<Road> roadsToBeRemoved = new ArrayList<>(p.toRoads());
-//        Iterator it = roads.iterator();
-//        while (it.hasNext()) {
-//            Road road = (Road)it.next();
-//            if (road.firstPlace().equals(p) || road.secondPlace().equals(p)) {
-//                roadsToBeRemoved.add(road);
-//            }
-//        }
         while (!roadsToBeRemoved.isEmpty()) {
             this.deleteRoad(roadsToBeRemoved.get(0));
             roadsToBeRemoved.remove(0);
@@ -824,20 +814,11 @@ public class MapImpl implements Map {
                     ((RoadImpl)road).setIsChosen(true);
                 }
             }
-//            this.roads.remove(r);
-//            this.roads.add(rImpl);
         }
 
         if (totalTrip == 0) {
             totalTrip = -1;
         }
-
-        // Iterator it = currentRoads.iterator();
-        // while (it.hasNext()) {
-        //     RoadImpl r = (RoadImpl)it.next();
-        //     totalTrip += r.length();
-        //     r.isChosen = true;
-        // }
 
         return totalTrip;
     }

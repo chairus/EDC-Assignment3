@@ -683,7 +683,6 @@ public class MapPanel extends JPanel implements MapListener {
 
     @Override
     protected void paintComponent(Graphics g) {
-//        System.out.printf("[ MapPanel ] paintComponent called%n");
         super.paintComponent(g);        // Customize what to paint after calling this
         totalTripDistance = map.getTripDistance();
         this.remove(totalDistanceLabel);
@@ -700,8 +699,6 @@ public class MapPanel extends JPanel implements MapListener {
             case SECOND_PLACE:
                 g.setColor(Color.BLACK);
                 g2.setStroke(new BasicStroke(Constants.ROAD_LINE_THICKNESS));
-//                Point mousePosition = getMousePosition();
-//                while (mousePosition == null) { mousePosition = getMousePosition(); }
                 Point mousePosition = MouseInfo.getPointerInfo().getLocation();
                 mousePosition.x -= getLocationOnScreen().x;
                 mousePosition.y -= getLocationOnScreen().y;

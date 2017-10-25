@@ -158,8 +158,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
-        System.out.println("[ PlaceIcon ] newRoadState: " + newRoadState);
         if (newRoadState == MapPanel.NewRoadState.DONE) {
             isSelected = !isSelected;
         } else {
@@ -193,7 +191,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.printf("[ PlaceIcon ] Mouse pressed%n");
         Point screenLocation = e.getLocationOnScreen();
         Point gridPosition = Methods.convertMapPositionToGridPosition(new Point(this.place.getX(), this.place.getY()));
         xDiff = screenLocation.x - gridPosition.x;

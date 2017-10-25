@@ -264,7 +264,6 @@ public class MapEditor implements ActionListener {
                 }
                 addRoadAction();
             } else if (actionCommand.contains("delete place")) {
-                System.err.printf("Delete place selected.%n");
                 deletePlaceAction();
             }
         } catch (MapFormatException e) {
