@@ -653,15 +653,6 @@ public class MapImpl implements Map {
 
         public void setIsChosen(boolean val) {
             isChosen = val;
-
-//            // Invoke the method on each listener
-//            for (RoadListener rl: roadListeners) {
-//                rl.roadChanged();
-//            }
-//            // Invoke the method on each map listener
-//            for (MapListener ml: mapListeners) {
-//                ml.otherChanged();
-//            }
         }
 
         //Return true if this road is chosen as part of the current trip

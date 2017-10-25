@@ -682,7 +682,6 @@ public class MapPanel extends JPanel implements MapListener {
     protected void paintComponent(Graphics g) {
 //        System.out.printf("[ MapPanel ] paintComponent called%n");
         super.paintComponent(g);        // Customize what to paint after calling this
-        totalTripDistance = map.getTripDistance();
         this.remove(totalDistanceLabel);
         createAndShowTotalTripDistance();
         Graphics2D g2 = (Graphics2D)g;
@@ -721,12 +720,14 @@ public class MapPanel extends JPanel implements MapListener {
     public void roadsChanged() {
         System.out.println("roadsChanged");
         updateRoads();
+        totalTripDistance = map.getTripDistance();
         repaint();
     }
 
     @Override
     public void otherChanged() {
         System.out.println("otherChanged");
+        totalTripDistance = map.getTripDistance();
         repaint();
     }
 
