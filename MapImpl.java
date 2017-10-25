@@ -828,8 +828,16 @@ public class MapImpl implements Map {
             RoadImpl rImpl = (RoadImpl)r;
             totalTrip += r.length();
             rImpl.setIsChosen(true);
-            this.roads.remove(r);
-            this.roads.add(rImpl);
+            for (Road road: roads) {
+//                if (road.roadName().equalsIgnoreCase(((RoadImpl) r).roadName)) {
+//                    ((RoadImpl)road).setIsChosen(true);
+//                }
+                if (road.equals(r)) {
+                    ((RoadImpl)road).setIsChosen(true);
+                }
+            }
+//            this.roads.remove(r);
+//            this.roads.add(rImpl);
         }
 
         if (totalTrip == 0) {
