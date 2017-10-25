@@ -219,7 +219,6 @@ public class MapPanel extends JPanel implements MapListener {
             case FIRST_PLACE:
                 if (getCursor().getType() != Cursor.CROSSHAIR_CURSOR) {
                     setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-                    System.err.println("CURSOR HAS BEEN CHANGED");
                 }
                 break;
             case SECOND_PLACE:
@@ -237,7 +236,6 @@ public class MapPanel extends JPanel implements MapListener {
                     endPlaceIcon.setIsSelected(false);
                     startPlaceIcon = null;
                     endPlaceIcon = null;
-                    System.err.println("[ MapPanel ] ROAD ADDED");
                     this.hasAddedRoad = true;
                     repaint();
                     updateState(NewRoadState.ADD_ROAD);
@@ -246,7 +244,6 @@ public class MapPanel extends JPanel implements MapListener {
             case DONE:
                 if (getCursor().getType() != Cursor.DEFAULT_CURSOR) {
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    System.err.println("CURSOR HAS BEEN CHANGED");
                 }
                 break;
             default:
