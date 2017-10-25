@@ -79,14 +79,12 @@ public class RoadIcon extends JComponent implements RoadListener{
 
     @Override
     protected void paintComponent(Graphics g) {
-//        System.out.println("[ RoadIcon ] paintComponent called");
         super.paintComponent(g);    // Customize what to paint after calling this
         drawRoad(g);
     }
 
     @Override
     public void roadChanged() {
-//        System.out.println("[ RoadIcon ] roadChanged called");
         repaint();
     }
 }

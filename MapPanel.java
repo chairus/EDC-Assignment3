@@ -132,6 +132,21 @@ public class MapPanel extends JPanel implements MapListener {
     }
 
     /**
+     * Removes all the roads and roadIcons in this map panel.
+     */
+    public void removeAllRoadAndRoadIcon() {
+        // Remove all road icons and mouse listeners
+        while (!this.roadIcons.isEmpty()) {
+            this.remove(this.roadIcons.get(0));
+            this.roadIcons.remove(0);
+        }
+        // Remove all roads
+        while (!this.roads.isEmpty()) {
+            this.roads.remove(0);
+        }
+    }
+
+    /**
      * Updates the list of places maintained by this MapPanel object by comparing the
      * map's places and this MapPanel's object places. If a place is in the map then
      * it would be removed from a copy of the list of places in this object's map and the
@@ -256,7 +271,6 @@ public class MapPanel extends JPanel implements MapListener {
         switch (currentState) {
             case FIRST_PLACE:
                 if (startPlace != null) {
-                    System.err.println("[ MapPanel ] updateState: USER HAS CLICKED A PLACE");
                     newRoadState = NewRoadState.SECOND_PLACE;
                     updatePlaceIconsNewRoadState(newRoadState);
                     performAction();
@@ -320,7 +334,7 @@ public class MapPanel extends JPanel implements MapListener {
         int roadsIndex = 0;
         while (roadsIndex < this.roads.size()) {
             if (mapRoads.size() == 0) {                        // This means that the remaining roads in the roads list are not in the map's roads
-                removePlaceIcon(this.places.get(roadsIndex));  // Remove the roadIcon associated to this road
+                removeRoadIcon(this.roads.get(roadsIndex));    // Remove the roadIcon associated to this road
                 this.roads.remove(roadsIndex);
                 continue;
             }
@@ -381,7 +395,6 @@ public class MapPanel extends JPanel implements MapListener {
              */
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.printf("[ MapPanel ] Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
                 List<PlaceIcon> selectedPlaceIcon;
                 switch (newRoadState) {
                     case DONE:
@@ -389,9 +402,7 @@ public class MapPanel extends JPanel implements MapListener {
                         if (hasDeselected) repaint();
                         break;
                     case FIRST_PLACE:
-                        System.err.println("[ MapPanel ] mouseClicked: FIRST_PLACE");
                         selectedPlaceIcon = getSelectedPlaceIcon();
-                        System.err.println("[ MapPanel ] mouseClicked: Number of selected place icon: " + selectedPlaceIcon.size());
                         for (PlaceIcon placeIcon: selectedPlaceIcon) {
                             startPlaceIcon = placeIcon;
                             startPlace = placeIcon.getPlace();
@@ -400,9 +411,7 @@ public class MapPanel extends JPanel implements MapListener {
                         updateState(NewRoadState.FIRST_PLACE);
                         break;
                     case SECOND_PLACE:
-                        System.err.println("[ MapPanel ] mouseClicked: SECOND_PLACE");
                         selectedPlaceIcon = getSelectedPlaceIcon();
-                        System.err.println("[ MapPanel ] mouseClicked: Number of selected place icon: " + selectedPlaceIcon.size());
                         for (PlaceIcon placeIcon: selectedPlaceIcon) {  // Look for the selected end place
                             if (placeIcon.getPlace() != startPlace) {   // Found the selected end place of the road
                                 endPlaceIcon = placeIcon;
@@ -428,10 +437,8 @@ public class MapPanel extends JPanel implements MapListener {
             public void mousePressed(MouseEvent e) {
                 switch (newRoadState) {
                     case DONE:
-                        System.out.printf("[ MapPanel ] Mouse Pressed%n");
                         startPoint = e.getPoint();
                         mouseStartPosition = e.getPoint();
-                        System.out.printf("[ MapPanel ] Mouse position at(x,y): (%f,%f)%n", startPoint.getX(), startPoint.getY());
                         break;
                     default:
                         break;
@@ -445,8 +452,6 @@ public class MapPanel extends JPanel implements MapListener {
              */
             @Override
             public void mouseReleased(MouseEvent e) {
-                System.out.printf("[ MapPanel ] Mouse Released%n");
-                System.out.printf("[ MapPanel ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
                 switch (newRoadState) {
                     case DONE:
                         int width = endPoint.x - startPoint.x;
@@ -507,7 +512,6 @@ public class MapPanel extends JPanel implements MapListener {
             public void mouseMoved(MouseEvent e) {
                 switch (newRoadState) {
                     case SECOND_PLACE:
-                        System.err.println("[ MapPanel ] mouseMoved: SECOND PLACE");
                         repaint();
                         break;
                     default:
@@ -582,8 +586,7 @@ public class MapPanel extends JPanel implements MapListener {
     private static boolean areEqual(Road r1, Road r2) {
         if (areEqual(r1.firstPlace(), r2.firstPlace()) &&
                 areEqual(r1.secondPlace(), r2.secondPlace()) &&
-                r1.roadName().equalsIgnoreCase(r2.roadName()) &&
-                r1.length() == r2.length()) {
+                r1.roadName().equalsIgnoreCase(r2.roadName())) {
             return true;
         }
         return false;
@@ -721,14 +724,12 @@ public class MapPanel extends JPanel implements MapListener {
     public void roadsChanged() {
         System.out.println("roadsChanged");
         updateRoads();
-//        totalTripDistance = map.getTripDistance();
         repaint();
     }
 
     @Override
     public void otherChanged() {
         System.out.println("otherChanged");
-//        totalTripDistance = map.getTripDistance();
         repaint();
     }
 

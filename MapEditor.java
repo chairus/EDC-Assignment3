@@ -174,6 +174,11 @@ public class MapEditor implements ActionListener {
                 ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
+        // Create the menu item "Delete place"
+        menuItem = new JMenuItem("[Delete place...]");
+        menuItem.setSelected(true);
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
         // Create the menu item "New road"
         menuItem = new JMenuItem("[New road...]");
         menuItem.setSelected(true);
@@ -258,6 +263,9 @@ public class MapEditor implements ActionListener {
                     throw new IllegalArgumentException("Please add two or more places first before adding a road.");
                 }
                 addRoadAction();
+            } else if (actionCommand.contains("delete place")) {
+                System.err.printf("Delete place selected.%n");
+                deletePlaceAction();
             }
         } catch (MapFormatException e) {
             System.err.println("MapFormatException: " + e.getMessage());
@@ -393,6 +401,7 @@ public class MapEditor implements ActionListener {
                 map = new MapImpl();                          // Create a new map to discard the places and/or roads of the previous map
                 this.mapPanel.setMap(map);
                 this.mapPanel.removeAllPlaceAndPlaceIcon();
+                this.mapPanel.removeAllRoadAndRoadIcon();
                 this.map.addListener(this.mapPanel);          // Add back the listeners to the map
                 readMap(filename, this.map);
             } else {
@@ -505,6 +514,17 @@ public class MapEditor implements ActionListener {
         System.out.printf("[ addPlaceAction ] Place name is \"%s\"%n", placeName);
         if (addPlace.isOkPressed()) {
             map.newPlace(placeName, 0, 0);  // Add the new place in the map object and set it's location to be at the center of the map
+        }
+    }
+
+    /**
+     * Deletes the selected places on the map and the roads associated
+     * to the deleted places.
+     */
+    private void deletePlaceAction() {
+        List<PlaceIcon> selectedPlaces = mapPanel.getSelectedPlaceIcon();
+        for (PlaceIcon placeIcon: selectedPlaces) {
+            map.deletePlace(placeIcon.getPlace());
         }
     }
 

@@ -242,9 +242,9 @@ public class MapImpl implements Map {
                     ml.roadsChanged();
                 }
                 // Invoke the method on each road listener
-                for (RoadListener rl: ((RoadImpl)r).getListeners()) {
-                    rl.roadChanged();
-                }
+//                for (RoadListener rl: ((RoadImpl)r).getListeners()) {
+//                    rl.roadChanged();
+//                }
             }
         }
     }
@@ -709,14 +709,14 @@ public class MapImpl implements Map {
      */
     private void removeRoads(Place p) {
         // And remove all roads associated with this place
-        ArrayList<Road> roadsToBeRemoved = new ArrayList<>();
-        Iterator it = roads.iterator();
-        while (it.hasNext()) {
-            Road road = (Road)it.next();
-            if (road.firstPlace().equals(p) || road.secondPlace().equals(p)) {
-                roadsToBeRemoved.add(road);
-            }
-        }
+        ArrayList<Road> roadsToBeRemoved = new ArrayList<>(p.toRoads());
+//        Iterator it = roads.iterator();
+//        while (it.hasNext()) {
+//            Road road = (Road)it.next();
+//            if (road.firstPlace().equals(p) || road.secondPlace().equals(p)) {
+//                roadsToBeRemoved.add(road);
+//            }
+//        }
         while (!roadsToBeRemoved.isEmpty()) {
             this.deleteRoad(roadsToBeRemoved.get(0));
             roadsToBeRemoved.remove(0);
@@ -820,9 +820,6 @@ public class MapImpl implements Map {
             totalTrip += r.length();
             rImpl.setIsChosen(true);
             for (Road road: roads) {
-//                if (road.roadName().equalsIgnoreCase(((RoadImpl) r).roadName)) {
-//                    ((RoadImpl)road).setIsChosen(true);
-//                }
                 if (road.equals(r)) {
                     ((RoadImpl)road).setIsChosen(true);
                 }
@@ -884,7 +881,6 @@ public class MapImpl implements Map {
                                   List<Road> roadsInSSSPSet) {
         // Stores the nodes where their shortest path from the source has already been determined.
         List<PlaceNode> finishedPlaceNodes = new ArrayList<>();
-        // System.out.println("Initialized nodes: " + priorityQueue);
 
         while (!priorityQueue.isEmpty()) {
             PlaceNode v = priorityQueue.poll();

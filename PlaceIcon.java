@@ -45,7 +45,8 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         this.y = gridPosition.y;
         // To set the location of the place on the center of the bounds
         this.setBounds(this.x - (Constants.PLACE_WIDTH/2), this.y - (Constants.PLACE_HEIGHT/2), Constants.PLACE_WIDTH, Constants.PLACE_HEIGHT);
-//        this.setBounds(this.x, this.y, Constants.placeWidth, Constants.placeHeight);
+        // Uncomment to set the location of the place on the top left of the bounds
+        // this.setBounds(this.x, this.y, Constants.placeWidth, Constants.placeHeight);
     }
 
     /**
@@ -82,7 +83,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 
     @Override
     public void placeChanged() {
-//        System.out.printf("[ PlaceIcon ] placeChanged called%n");
         if (this.place.isStartPlace()) {
             placeIconState = PlaceIconState.START;
             if (this.isSelected) this.isSelected = false;
@@ -103,7 +103,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
 
     @Override
     protected void paintComponent(Graphics g) {
-//        System.out.println("[ PlaceIcon ] paintComponent called");
         super.paintComponent(g);             // Customize what to paint after calling this
         Color fillColor = selectColor();
         g.setColor(fillColor);
@@ -161,7 +160,11 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     public void mouseClicked(MouseEvent e) {
         System.out.printf("Mouse clicked at(x,y): (%d,%d)%n", e.getX(), e.getY());
         System.out.println("[ PlaceIcon ] newRoadState: " + newRoadState);
-        isSelected = !isSelected;
+        if (newRoadState == MapPanel.NewRoadState.DONE) {
+            isSelected = !isSelected;
+        } else {
+            if (!isSelected) isSelected = !isSelected;
+        }
         if (this.isSelected) {
             placeIconState = PlaceIconState.SELECTED;
         } else {
@@ -173,11 +176,9 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         switch (newRoadState) {
             case FIRST_PLACE:
                 this.getParent().dispatchEvent(e);
-                System.err.println("[ PlaceIcon ] mouseClicked: EVENT DISPATCHED FIRST_PLACE");
                 break;
             case SECOND_PLACE:
                 this.getParent().dispatchEvent(e);
-                System.err.println("[ PlaceIcon ] mouseClicked: EVENT DISPATCHED SECOND_PLACE");
                 break;
             default:
                 break;
@@ -195,8 +196,6 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         System.out.printf("[ PlaceIcon ] Mouse pressed%n");
         Point screenLocation = e.getLocationOnScreen();
         Point gridPosition = Methods.convertMapPositionToGridPosition(new Point(this.place.getX(), this.place.getY()));
-//        xDiff = screenLocation.x - this.place.getX();
-//        yDiff = screenLocation.y - this.place.getY();
         xDiff = screenLocation.x - gridPosition.x;
         yDiff = screenLocation.y - gridPosition.y;
     }
@@ -208,7 +207,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-//        System.out.printf("[ PlaceIcon ] Mouse released%n");
+        // IGNORE
     }
 
     /**
@@ -218,7 +217,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseEntered(MouseEvent e) {
-//        System.out.printf("[ PlaceIcon ] Mouse entered%n");
+        // IGNORE
     }
 
     /**
@@ -228,7 +227,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseExited(MouseEvent e) {
-//        System.out.printf("[ PlaceIcon ] Mouse exited%n");
+        // IGNORE
     }
 
     //////////////////////////////
@@ -250,15 +249,10 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.printf("[ PlaceIcon ] Mouse dragged%n");
         Point screenLocation = e.getLocationOnScreen();
-//        Point originLocation = new Point(this.place.getX(), this.place.getY());
         Point originLocation = Methods.convertMapPositionToGridPosition(new Point(this.place.getX(), this.place.getY()));
-//        int dx = screenLocation.x - originLocation.x - this.xDiff - (this.mousePressedBoundsLocation.x - Constants.placeWidth/2);       // Change in x direction
-//        int dy = screenLocation.y - originLocation.y - this.yDiff - (this.mousePressedBoundsLocation.y - Constants.placeHeight/2);  // Change in y direction
         int dx = screenLocation.x - originLocation.x - this.xDiff;       // Change in x direction
         int dy = originLocation.y + this.yDiff - screenLocation.y;       // Change in y direction
-//        int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
         this.place.moveBy(dx, dy);
     }
 
@@ -270,10 +264,7 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
      */
     @Override
     public void mouseMoved(MouseEvent e) {
-//        System.out.printf("[ PlaceIcon ] Mouse Moved%n");
-//        System.out.printf("[ PlaceIcon ] Mouse position at(x,y): (%d,%d)%n", e.getX(), e.getY());
-//        Point screenLocation = e.getLocationOnScreen();
-//        System.out.printf("[ PlaceIcon ] Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
+        // IGNORE
     }
 
     /**
