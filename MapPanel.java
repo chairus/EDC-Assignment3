@@ -26,6 +26,7 @@ public class MapPanel extends JPanel implements MapListener {
     private Place endPlace;                 // The end place of the new road to be added
     private PlaceIcon endPlaceIcon;         // The place icon that corresponds to the selected end place
     private boolean hasAddedRoad;           // A flag that tells if the new road has been successfully added
+    public static int totalTripDistance;          // Stores the total trip distance from the start to end place
 
 
     /**
@@ -54,6 +55,7 @@ public class MapPanel extends JPanel implements MapListener {
         this.startPlaceIcon = null;
         this.endPlaceIcon = null;
         this.hasAddedRoad = false;
+        totalTripDistance = -1;
         setLayout(null);
         addMouseListeners();
         addMouseMotionListeners();
@@ -661,10 +663,24 @@ public class MapPanel extends JPanel implements MapListener {
         this.map = map;
     }
 
+    /**
+     * Creates and show the total trip distance on the GUI
+     */
+    private void createAndShowTotalTripDistance() {
+        JLabel totalDistanceLabel = new JLabel();
+        String message = "Total trip distance: " + totalTripDistance;
+        totalDistanceLabel.setText(message);
+        totalDistanceLabel.setFont(new Font(totalDistanceLabel.getFont().getFontName(), Font.BOLD, 14));
+//        totalDistanceLabel.setLocation(10,10);
+        this.add(totalDistanceLabel);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
 //        System.out.printf("[ MapPanel ] paintComponent called%n");
         super.paintComponent(g);        // Customize what to paint after calling this
+        totalTripDistance = map.getTripDistance();
+        createAndShowTotalTripDistance();
         Graphics2D g2 = (Graphics2D)g;
         switch (newRoadState) {
             case DONE:

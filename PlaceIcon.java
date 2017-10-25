@@ -83,17 +83,21 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
     @Override
     public void placeChanged() {
 //        System.out.printf("[ PlaceIcon ] placeChanged called%n");
-        this.updatePlaceIconCoordinate();
         if (this.place.isStartPlace()) {
             placeIconState = PlaceIconState.START;
             if (this.isSelected) this.isSelected = false;
         } else if (this.place.isEndPlace()) {
             placeIconState = PlaceIconState.END;
+            Point newCoordinates = Methods.convertMapPositionToGridPosition(new Point(place.getX(), place.getY()));
+            if (this.isSelected && (this.x != newCoordinates.x || this.y != newCoordinates.y)) {
+                placeIconState = PlaceIconState.SELECTED;
+            }
             if (this.isSelected) this.isSelected = false;
         } else {
             if (this.isSelected) placeIconState = PlaceIconState.SELECTED;
             else placeIconState = PlaceIconState.DESELECTED;
         }
+        this.updatePlaceIconCoordinate();
         repaint();
     }
 
@@ -250,12 +254,11 @@ public class PlaceIcon extends JComponent implements PlaceListener, MouseListene
         Point screenLocation = e.getLocationOnScreen();
 //        Point originLocation = new Point(this.place.getX(), this.place.getY());
         Point originLocation = Methods.convertMapPositionToGridPosition(new Point(this.place.getX(), this.place.getY()));
-//        System.out.printf("Mouse location on screen(x,y): (%d,%d)%n", screenLocation.x, screenLocation.y);
 //        int dx = screenLocation.x - originLocation.x - this.xDiff - (this.mousePressedBoundsLocation.x - Constants.placeWidth/2);       // Change in x direction
 //        int dy = screenLocation.y - originLocation.y - this.yDiff - (this.mousePressedBoundsLocation.y - Constants.placeHeight/2);  // Change in y direction
         int dx = screenLocation.x - originLocation.x - this.xDiff;       // Change in x direction
-//        int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
         int dy = originLocation.y + this.yDiff - screenLocation.y;       // Change in y direction
+//        int dy = screenLocation.y - originLocation.y - this.yDiff;       // Change in y direction
         this.place.moveBy(dx, dy);
     }
 

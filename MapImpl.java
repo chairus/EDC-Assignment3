@@ -354,6 +354,11 @@ public class MapImpl implements Map {
     //Returns the total distance of the trip.
     //Returns -1, if there is no route from start to end
     public int getTripDistance() {
+        // Unset or deselect the chosen roads from previous start and end place
+        for (Road road: this.roads) {
+            if (road.isChosen()) ((RoadImpl)road).setIsChosen(false);
+        }
+
         if (this.startPlace == null || this.endPlace == null) {
             return -1;
         }

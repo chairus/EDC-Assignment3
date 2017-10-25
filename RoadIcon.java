@@ -39,7 +39,11 @@ public class RoadIcon extends JComponent implements RoadListener{
         Point end = getGridCoordinates(this.road.secondPlace());
         updateBounds();
         Graphics2D g2 = (Graphics2D)g;
-        g2.setColor(Color.BLACK);
+        Color roadColor = Color.BLACK;
+        if (road.isChosen()) {
+            roadColor = Color.ORANGE;
+        }
+        g2.setColor(roadColor);
         g2.setStroke(new BasicStroke(Constants.ROAD_LINE_THICKNESS));
         g2.drawLine(start.x, start.y, end.x, end.y);
         String roadNameAndLength = this.road.roadName() + "(" + this.road.length() + ")";

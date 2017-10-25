@@ -17,6 +17,7 @@ public class MapEditor implements ActionListener {
     private MapPanel mapPanel;
     private Map map;
     private MapReaderWriter mapReaderWriter;
+    private JLabel totalTripDistanceLabel;
 
     /**
      * Constructor
@@ -26,6 +27,7 @@ public class MapEditor implements ActionListener {
         mapReaderWriter = new MapReaderWriter();
         mapPanel = new MapPanel(map);
         map.addListener(mapPanel);
+        this.totalTripDistanceLabel = new JLabel();
     }
 
     /**
@@ -822,6 +824,17 @@ public class MapEditor implements ActionListener {
     private enum FileOption {
         OPEN,   // Open a file
         SAVE,   // Save a file
+    }
+
+    /////////////////////
+    //  FOR DEBUGGING  //
+    /////////////////////
+    private void printChosenRoads() {
+        for (Road r: map.getRoads()) {
+            if (r.isChosen()) {
+                System.out.println(r.toString());
+            }
+        }
     }
 
     /**
