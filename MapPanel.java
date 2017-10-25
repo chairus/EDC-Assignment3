@@ -26,7 +26,8 @@ public class MapPanel extends JPanel implements MapListener {
     private Place endPlace;                 // The end place of the new road to be added
     private PlaceIcon endPlaceIcon;         // The place icon that corresponds to the selected end place
     private boolean hasAddedRoad;           // A flag that tells if the new road has been successfully added
-    public static int totalTripDistance;          // Stores the total trip distance from the start to end place
+    private int totalTripDistance;          // Stores the total trip distance from the start to end place
+    private JLabel totalDistanceLabel;      // A label to display the total trip distance
 
 
     /**
@@ -57,6 +58,7 @@ public class MapPanel extends JPanel implements MapListener {
         this.hasAddedRoad = false;
         totalTripDistance = -1;
         setLayout(null);
+        createAndShowTotalTripDistance();
         addMouseListeners();
         addMouseMotionListeners();
         addResizeListener();
@@ -667,11 +669,12 @@ public class MapPanel extends JPanel implements MapListener {
      * Creates and show the total trip distance on the GUI
      */
     private void createAndShowTotalTripDistance() {
-        JLabel totalDistanceLabel = new JLabel();
+        totalDistanceLabel = new JLabel();
         String message = "Total trip distance: " + totalTripDistance;
+        if (totalTripDistance <= -1) message = "No Route Found";
         totalDistanceLabel.setText(message);
         totalDistanceLabel.setFont(new Font(totalDistanceLabel.getFont().getFontName(), Font.BOLD, 14));
-//        totalDistanceLabel.setLocation(10,10);
+        totalDistanceLabel.setBounds(5,5, 200, 20);
         this.add(totalDistanceLabel);
     }
 
@@ -680,6 +683,7 @@ public class MapPanel extends JPanel implements MapListener {
 //        System.out.printf("[ MapPanel ] paintComponent called%n");
         super.paintComponent(g);        // Customize what to paint after calling this
         totalTripDistance = map.getTripDistance();
+        this.remove(totalDistanceLabel);
         createAndShowTotalTripDistance();
         Graphics2D g2 = (Graphics2D)g;
         switch (newRoadState) {
