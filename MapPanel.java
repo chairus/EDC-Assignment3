@@ -671,7 +671,7 @@ public class MapPanel extends JPanel implements MapListener {
     private void createAndShowTotalTripDistance() {
         totalDistanceLabel = new JLabel();
         String message = "Total trip distance: " + totalTripDistance;
-        if (totalTripDistance <= -1) message = "No Route Found";
+        if (totalTripDistance <= -1) message = "No route";
         totalDistanceLabel.setText(message);
         totalDistanceLabel.setFont(new Font(totalDistanceLabel.getFont().getFontName(), Font.BOLD, 14));
         totalDistanceLabel.setBounds(5,5, 200, 20);
