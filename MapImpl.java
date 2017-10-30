@@ -825,8 +825,8 @@ public class MapImpl implements Map {
 
     /**
      * This method invokes the methods to run the Dijkstra's algorithm.
-     * @param finishedPlaces [description]
-     * @param roadsInSSSPSet [description]
+     * @param finishedPlaces
+     * @param roadsInSSSPSet
      */
     private void SSSP (List<Place> finishedPlaces, List<Road> roadsInSSSPSet) {
         // A priority queue that stores a pair (place, estimatedDistance).
@@ -838,8 +838,8 @@ public class MapImpl implements Map {
 
     /**
      * Initializes the nodes before running Dijkstra's algorithm on them
-     * @param priorityQueue [description]
-     * @param sourceNode    [description]
+     * @param priorityQueue
+     * @param sourceNode
      */
     private void initializeSingleSource(Queue<PlaceNode> priorityQueue, Place sourceNode) {
         for (Place p: this.places) {

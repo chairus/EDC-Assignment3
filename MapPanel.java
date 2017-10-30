@@ -419,7 +419,6 @@ public class MapPanel extends JPanel implements MapListener {
                         updateState(NewRoadState.SECOND_PLACE);
                         break;
                     default:
-                        System.err.println("[ MapPanel ] mouseClicked: DEFAULT");
                         break;
                 }
 
@@ -709,21 +708,18 @@ public class MapPanel extends JPanel implements MapListener {
 
     @Override
     public void placesChanged() {
-        System.out.println("placesChanged");
         updatePlaces();
         repaint();
     }
 
     @Override
     public void roadsChanged() {
-        System.out.println("roadsChanged");
         updateRoads();
         repaint();
     }
 
     @Override
     public void otherChanged() {
-        System.out.println("otherChanged");
         repaint();
     }
 

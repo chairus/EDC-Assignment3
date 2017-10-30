@@ -159,10 +159,6 @@ public class MapEditor implements ActionListener {
         // Create the menu item "New place"
         menuItem = new JMenuItem("[New place...]");
         menuItem.setSelected(true);
-//        menuItem.setMnemonic(KeyEvent.VK_P);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + P' to select this menu item
-//                KeyEvent.VK_P,
-//                ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         menu.add(menuItem);
         // Create the menu item "Add place"
@@ -182,11 +178,6 @@ public class MapEditor implements ActionListener {
         // Create the menu item "New road"
         menuItem = new JMenuItem("[New road...]");
         menuItem.setSelected(true);
-//        menuItem.setMnemonic(KeyEvent.VK_R);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(     // Set keyboard keys 'CTRL + R' to select this menu item
-//                KeyEvent.VK_R,
-//                ActionEvent.CTRL_MASK));
-//        menuItem.addActionListener(this);
         menu.add(menuItem);
         // Create the menu item "Add road"
         menuItem = new JMenuItem("[Add road...]");
@@ -316,7 +307,6 @@ public class MapEditor implements ActionListener {
         List<PlaceIcon> selectedPlaceIcons = mapPanel.getSelectedPlaceIcon();
         List<PlaceIcon> candidatePlaceIcons = new ArrayList<>();
 
-        System.out.printf("Number of selected places: %d%n", selectedPlaceIcons.size());
         ///////////////////////////////////////////////////////////////////////
         //  Check if a place is already a start/end place if there is then   //
         //  return a null to prevent the map panel to be repainted.          //
@@ -407,7 +397,6 @@ public class MapEditor implements ActionListener {
                 throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
             }
         }
-        System.out.printf("Map:%n%s", map.toString());
     }
 
     /**
@@ -445,7 +434,6 @@ public class MapEditor implements ActionListener {
                 throw new MapFormatException(-1, "Invalid map file format. Valid map files should have a file extension of \".map\"");
             }
         }
-        System.out.printf("Map:%n%s", map.toString());
     }
 
     /**
@@ -510,7 +498,6 @@ public class MapEditor implements ActionListener {
     private void addPlaceAction() {
         PlaceInputDialog addPlace = new PlaceInputDialog(frame, "Add place", "Place name");
         String placeName = addPlace.getPlaceName();
-        System.out.printf("[ addPlaceAction ] Place name is \"%s\"%n", placeName);
         if (addPlace.isOkPressed()) {
             map.newPlace(placeName, 0, 0);  // Add the new place in the map object and set it's location to be at the center of the map
         }
@@ -536,8 +523,6 @@ public class MapEditor implements ActionListener {
         if (addRoad.isOkPressed()) {
             try {
                 int roadLength = Integer.parseInt(addRoad.getLength());
-                System.out.printf("[ addRoadAction ] Road name is \"%s\"%n", roadName);
-                System.out.printf("[ addRoadAction ] Road length is %d%n", roadLength);
                 mapPanel.newRoad(roadName, roadLength);
             } catch (NumberFormatException e) {
                 throw new NumberFormatException("Invalid length: " + addRoad.getLength());
@@ -741,7 +726,7 @@ public class MapEditor implements ActionListener {
                     250,
                     message));
             messageLabel.setText(labelText);
-            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
+            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 16));
             messagePanel.add(messageLabel);
             getContentPane().add(messagePanel);
             JPanel buttonPanel = new JPanel();
@@ -779,7 +764,7 @@ public class MapEditor implements ActionListener {
                                                             250,
                                                             message));
             messageLabel.setText(labelText);
-            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 20));
+            messageLabel.setFont(new Font(messageLabel.getFont().getFontName(), Font.BOLD, 16));
             messagePanel.add(messageLabel);
             getContentPane().add(messagePanel);
             JPanel buttonPanel = new JPanel();
